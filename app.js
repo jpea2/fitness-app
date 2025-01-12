@@ -223,18 +223,27 @@ function saveToLocalStorage() {
 function loadFromLocalStorage() {
     const savedData = localStorage.getItem('exerciseData');
     if (savedData) {
-        exerciseData = JSON.parse(savedData);
+        const parsedData = JSON.parse(savedData);
+        // Ensure we have the default exercises even if loading from storage
+        exerciseData = {
+            exercises: Array.from(new Set([
+                'Squats',
+                'Bench Press',
+                'Deadlift',
+                ...(parsedData.exercises || [])
+            ]))
+        };
     } else {
         // If no saved data, initialize with default exercises
         exerciseData = {
             exercises: ['Squats', 'Bench Press', 'Deadlift']
         };
-        saveToLocalStorage();
     }
+    saveToLocalStorage();
     
     // Load dark mode preference
-    const darkMode = localStorage.getItem('darkMode');
-    if (darkMode === 'true') {
+    const darkMode = localStorage.getItem('darkMode') === 'true';
+    if (darkMode) {
         document.body.classList.add('dark-mode');
         document.getElementById('darkModeToggle').checked = true;
     }
@@ -258,6 +267,14 @@ document.addEventListener('DOMContentLoaded', () => {
     updateWorkoutDisplay();
     loadProgress();
 });
+
+// Initialize settings page
+if (window.location.pathname.includes('settings.html')) {
+    document.addEventListener('DOMContentLoaded', () => {
+        loadFromLocalStorage();
+        updateExerciseList();
+    });
+}
 
 function saveWorkout() {
     const workoutDate = document.getElementById('workoutDate').value;
