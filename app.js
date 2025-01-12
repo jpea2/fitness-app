@@ -160,30 +160,78 @@ function createExerciseCard(exercise, data) {
     `).join('');
     
     card.innerHTML = `
-        <div class="exercise-name">${exercise}</div>
+        <div class="exercise-header">
+            <div class="exercise-name">${exercise}</div>
+            <button class="button button-danger remove-exercise">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
         <div class="sets-container">${sets}</div>
         <div class="pr-info">PR: ${data.pr || 'Not set'}</div>
     `;
     
+    // Add click event listener to remove button
+    const removeButton = card.querySelector('.remove-exercise');
+    console.log('Setting up remove button for:', exercise);
+    removeButton.addEventListener('click', (e) => {
+        console.log('Remove button clicked for:', exercise);
+        e.preventDefault();
+        e.stopPropagation();
+        removeExerciseFromWorkout(exercise);
+    });
+    
     return card;
 }
 
+function removeExerciseFromWorkout(exerciseName) {
+    console.log('Removing exercise:', exerciseName);
+    const workoutDate = document.getElementById('workoutDate').value;
+    console.log('Current workout date:', workoutDate);
+    let workoutData = JSON.parse(localStorage.getItem('workoutData')) || {};
+    console.log('Current workout data:', workoutData);
+    
+    if (workoutData[workoutDate] && workoutData[workoutDate].exercises) {
+        console.log('Found exercises for date, deleting:', exerciseName);
+        delete workoutData[workoutDate].exercises[exerciseName];
+        localStorage.setItem('workoutData', JSON.stringify(workoutData));
+        console.log('Updated workout data:', workoutData);
+        updateWorkoutDisplay();
+    } else {
+        console.log('No exercises found for date:', workoutDate);
+    }
+}
+
 function updateWorkoutDisplay() {
+    console.log('Updating workout display');
     const container = document.getElementById('exercises-container');
-    if (!container) return;
+    if (!container) {
+        console.log('Container not found');
+        return;
+    }
     
     const workoutData = JSON.parse(localStorage.getItem('workoutData')) || {};
+    const workoutDate = document.getElementById('workoutDate').value;
+    console.log('Display workout data for date:', workoutDate);
+    console.log('Workout data:', workoutData);
+    
     container.innerHTML = '';
     
-    Object.entries(workoutData).forEach(([exercise, data]) => {
-        const card = createExerciseCard(exercise, data);
-        container.appendChild(card);
-    });
+    if (workoutData[workoutDate] && workoutData[workoutDate].exercises) {
+        console.log('Found exercises for date:', Object.keys(workoutData[workoutDate].exercises));
+        Object.entries(workoutData[workoutDate].exercises).forEach(([exercise, data]) => {
+            console.log('Creating card for exercise:', exercise);
+            const card = createExerciseCard(exercise, data);
+            container.appendChild(card);
+        });
+    } else {
+        console.log('No exercises found for date:', workoutDate);
+    }
 }
 
 // Form submission
 document.getElementById('exerciseForm')?.addEventListener('submit', function(e) {
     e.preventDefault();
+    console.log('Form submitted');
     
     const exercise = document.getElementById('exercise').value;
     const sets = [];
@@ -196,10 +244,22 @@ document.getElementById('exerciseForm')?.addEventListener('submit', function(e) 
         });
     });
     
-    const workoutData = JSON.parse(localStorage.getItem('workoutData')) || {};
-    workoutData[exercise] = { sets };
+    console.log('Adding exercise:', exercise, 'with sets:', sets);
     
+    const workoutDate = document.getElementById('workoutDate').value;
+    let workoutData = JSON.parse(localStorage.getItem('workoutData')) || {};
+    
+    // Initialize the structure if it doesn't exist
+    if (!workoutData[workoutDate]) {
+        workoutData[workoutDate] = { exercises: {} };
+    }
+    
+    // Add the exercise to the current date's exercises
+    workoutData[workoutDate].exercises[exercise] = { sets };
+    
+    console.log('Updated workout data:', workoutData);
     localStorage.setItem('workoutData', JSON.stringify(workoutData));
+    
     updateWorkoutDisplay();
     hideModal();
 });

@@ -171,8 +171,12 @@ header {
 }
 
 .button-danger {
-    background-color: var(--danger-color);
+    background-color: #dc3545;
     color: white;
+}
+
+.button-danger:hover {
+    background-color: #c82333;
 }
 
 .button:active {
@@ -718,4 +722,17 @@ body.dark-mode .modal-close:hover {
 
 .modal-footer .button {
     flex: 1;
+}
+
+.exercise-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.remove-exercise {
+    padding: 5px 10px;
+    font-size: 14px;
+    min-width: auto;
 }
