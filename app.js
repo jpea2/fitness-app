@@ -13,7 +13,7 @@ if ('serviceWorker' in navigator) {
 
 // Exercise data management
 let exerciseData = {
-    exercises: []
+    exercises: ['Squats', 'Bench Press', 'Deadlift'] // Initialize with default exercises
 };
 
 // Modal management
@@ -118,6 +118,33 @@ function updateExerciseList() {
     });
     
     saveToLocalStorage();
+    updateExerciseDropdown(); // Update exercise dropdown after list changes
+}
+
+function updateExerciseDropdown() {
+    const select = document.getElementById('exercise');
+    if (!select) return;
+    
+    // Save current selection if any
+    const currentValue = select.value;
+    
+    // Clear existing options except the first placeholder
+    while (select.options.length > 1) {
+        select.remove(1);
+    }
+    
+    // Add exercise options
+    exerciseData.exercises.forEach(exercise => {
+        const option = document.createElement('option');
+        option.value = exercise;
+        option.textContent = exercise;
+        select.appendChild(option);
+    });
+    
+    // Restore previous selection if it still exists
+    if (exerciseData.exercises.includes(currentValue)) {
+        select.value = currentValue;
+    }
 }
 
 // Workout management
@@ -197,6 +224,12 @@ function loadFromLocalStorage() {
     const savedData = localStorage.getItem('exerciseData');
     if (savedData) {
         exerciseData = JSON.parse(savedData);
+    } else {
+        // If no saved data, initialize with default exercises
+        exerciseData = {
+            exercises: ['Squats', 'Bench Press', 'Deadlift']
+        };
+        saveToLocalStorage();
     }
     
     // Load dark mode preference
@@ -211,6 +244,8 @@ function loadFromLocalStorage() {
     if (units) {
         document.getElementById('unitsSelect').value = units;
     }
+    
+    updateExerciseList();
 }
 
 // Initialize workout date to today
@@ -218,6 +253,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const today = new Date().toISOString().split('T')[0];
     document.getElementById('workoutDate').value = today;
     loadFromLocalStorage();
+    updateExerciseDropdown(); // Initialize exercise dropdown when page loads
     updateExerciseList();
     updateWorkoutDisplay();
     loadProgress();
