@@ -30,43 +30,72 @@
 </head>
 <body>
     <header>
-        <h1>Settings - Fitness App</h1>
+        <h1 class="header-title">Settings</h1>
     </header>
-    <main id="content">
-        <div class="settings-section">
-            <h2>Manage Exercises</h2>
-            <div id="exercise-management">
-                <div class="add-exercise">
-                    <input type="text" id="new-exercise-name" placeholder="Enter exercise name">
-                    <button onclick="addExercise()">Add</button>
-                </div>
-                <ul id="exercise-list"></ul>
+
+    <main class="fade-in">
+        <div class="card">
+            <h2 class="card-title">Exercise List</h2>
+            <div class="add-exercise">
+                <input type="text" id="newExercise" placeholder="Add new exercise">
+                <button onclick="addNewExercise()" class="button button-primary">
+                    <i class="fas fa-plus"></i> Add
+                </button>
             </div>
+            <ul id="exercise-list" class="settings-list">
+                <!-- Exercise list items will be added here -->
+            </ul>
         </div>
 
-        <div class="settings-section">
-            <h2>Manage Personal Records</h2>
-            <div id="pr-list">
-                <ul id="pr-items"></ul>
+        <div class="card">
+            <h2 class="card-title">App Settings</h2>
+            <ul class="settings-list">
+                <li class="settings-item">
+                    <span>Dark Mode</span>
+                    <label class="switch">
+                        <input type="checkbox" id="darkModeToggle">
+                        <span class="slider round"></span>
+                    </label>
+                </li>
+                <li class="settings-item">
+                    <span>Units</span>
+                    <select id="unitsSelect" class="settings-select">
+                        <option value="metric">Metric (kg)</option>
+                        <option value="imperial">Imperial (lbs)</option>
+                    </select>
+                </li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h2 class="card-title">About</h2>
+            <div class="settings-list">
+                <div class="settings-item">
+                    <span>Version</span>
+                    <span>1.0.0</span>
+                </div>
+                <div class="settings-item">
+                    <span>Made with ❤️ by Codeium</span>
+                </div>
             </div>
         </div>
     </main>
-    <footer>
-        <nav>
-            <button>
-                <i class="fas fa-home"></i>
-                <span><a href="index.html">Home</a></span>
-            </button>
-            <button>
-                <i class="fas fa-chart-line"></i>
-                <span><a href="progress.html">Progress</a></span>
-            </button>
-            <button>
-                <i class="fas fa-cog"></i>
-                <span><a href="settings.html">Settings</a></span>
-            </button>
-        </nav>
-    </footer>
+
+    <nav class="nav-bar">
+        <a href="index.html" class="nav-item">
+            <i class="fas fa-dumbbell"></i>
+            <span>Workout</span>
+        </a>
+        <a href="progress.html" class="nav-item">
+            <i class="fas fa-chart-line"></i>
+            <span>Progress</span>
+        </a>
+        <a href="settings.html" class="nav-item active">
+            <i class="fas fa-cog"></i>
+            <span>Settings</span>
+        </a>
+    </nav>
+
     <script src="app.js"></script>
 </body>
 </html>

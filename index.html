@@ -30,50 +30,66 @@
 </head>
 <body>
     <header>
-        <h1>Fitness App</h1>
+        <h1 class="header-title">Workout Tracker</h1>
     </header>
-    <main id="content">
-        <div id="home" class="page">
-            <div class="exercise-card" onclick="openExerciseModal('Squats')">
-                <span class="exercise-name">Exercise 1: Squats</span>
-                <div class="pr-info" id="squats-pr">PR: Not set</div>
-            </div>
-            <div class="exercise-card" onclick="openExerciseModal('Bench Press')">
-                <span class="exercise-name">Exercise 2: Bench Press</span>
-                <div class="pr-info" id="bench-press-pr">PR: Not set</div>
-            </div>
-            <div class="exercise-card" onclick="openExerciseModal('Deadlift')">
-                <span class="exercise-name">Exercise 3: Deadlift</span>
-                <div class="pr-info" id="deadlift-pr">PR: Not set</div>
-            </div>
+
+    <main class="fade-in">
+        <div class="card">
+            <h2 class="card-title">Today's Workout</h2>
+            <button class="button button-primary" onclick="showModal()">
+                <i class="fas fa-plus"></i> Add Exercise
+            </button>
+        </div>
+
+        <div id="exercises-container">
+            <!-- Exercise cards will be added here -->
         </div>
     </main>
-    <footer>
-        <nav>
-            <button>
-                <i class="fas fa-home"></i>
-                <span><a href="index.html">Home</a></span>
-            </button>
-            <button>
-                <i class="fas fa-chart-line"></i>
-                <span><a href="progress.html">Progress</a></span>
-            </button>
-            <button>
-                <i class="fas fa-cog"></i>
-                <span><a href="settings.html">Settings</a></span>
-            </button>
-        </nav>
-    </footer>
 
-    <!-- Modal for Exercise Input -->
-    <div id="exerciseModal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <span class="close" onclick="closeExerciseModal()">&times;</span>
-            <h2 id="exerciseName"></h2>
+    <!-- Modal for adding exercises -->
+    <div id="modal" class="modal">
+        <div class="modal-content fade-in">
+            <span class="close" onclick="hideModal()">&times;</span>
+            <h2 id="exerciseName">Add Exercise</h2>
             <form id="exerciseForm">
+                <div class="form-group">
+                    <label for="exercise">Exercise:</label>
+                    <input type="text" id="exercise" required>
+                </div>
+                <div id="sets">
+                    <div class="form-group">
+                        <label>Set 1:</label>
+                        <input type="number" placeholder="Weight (kg)" required>
+                        <input type="number" placeholder="Reps" required>
+                        <button type="button" onclick="removeSet(this)" class="remove-set-btn">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                    </div>
+                </div>
+                <button type="button" onclick="addSet()" class="button button-secondary">
+                    <i class="fas fa-plus"></i> Add Set
+                </button>
+                <div class="form-buttons">
+                    <button type="submit" class="button button-primary">Save Exercise</button>
+                </div>
             </form>
         </div>
     </div>
+
+    <nav class="nav-bar">
+        <a href="index.html" class="nav-item active">
+            <i class="fas fa-dumbbell"></i>
+            <span>Workout</span>
+        </a>
+        <a href="progress.html" class="nav-item">
+            <i class="fas fa-chart-line"></i>
+            <span>Progress</span>
+        </a>
+        <a href="settings.html" class="nav-item">
+            <i class="fas fa-cog"></i>
+            <span>Settings</span>
+        </a>
+    </nav>
 
     <script src="app.js"></script>
 </body>
