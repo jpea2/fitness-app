@@ -2,29 +2,30 @@ const express = require('express');
 const path = require('path');
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
-// Serve static files from the 'public' directory
-app.use(express.static(path.join(__dirname, 'public')));
+// Serve static files from the root directory
+app.use(express.static(__dirname));
 
-// Route to serve the home.html file
-app.get('/home', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
+// Enable JSON parsing for POST requests
+app.use(express.json());
 
-// Route to serve the progress.html file
-app.get('/progress', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'progress.html'));
-});
-
-// Route to serve the settings.html file
-app.get('/settings', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'settings.html'));
-});
-
-// Default route to redirect to home
+// Routes for HTML pages
 app.get('/', (req, res) => {
-    res.redirect('/home');
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+app.get('/progress', (req, res) => {
+    res.sendFile(path.join(__dirname, 'progress.html'));
+});
+
+app.get('/settings', (req, res) => {
+    res.sendFile(path.join(__dirname, 'settings.html'));
+});
+
+// Handle 404s
+app.use((req, res) => {
+    res.status(404).sendFile(path.join(__dirname, 'index.html'));
 });
 
 // Start the server
