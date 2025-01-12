@@ -13,7 +13,7 @@ if ('serviceWorker' in navigator) {
 
 // Exercise data management
 let exerciseData = {
-    exercises: ['Squats', 'Bench Press', 'Deadlift'] // Initialize with default exercises
+    exercises: ['Squats', 'Bench Press', 'Deadlift'] // Default exercises only for first time
 };
 
 // Modal management
@@ -223,23 +223,15 @@ function saveToLocalStorage() {
 function loadFromLocalStorage() {
     const savedData = localStorage.getItem('exerciseData');
     if (savedData) {
-        const parsedData = JSON.parse(savedData);
-        // Ensure we have the default exercises even if loading from storage
-        exerciseData = {
-            exercises: Array.from(new Set([
-                'Squats',
-                'Bench Press',
-                'Deadlift',
-                ...(parsedData.exercises || [])
-            ]))
-        };
+        // Load saved exercises without enforcing defaults
+        exerciseData = JSON.parse(savedData);
     } else {
-        // If no saved data, initialize with default exercises
+        // Only set default exercises for first-time users
         exerciseData = {
             exercises: ['Squats', 'Bench Press', 'Deadlift']
         };
+        saveToLocalStorage();
     }
-    saveToLocalStorage();
     
     // Load dark mode preference
     const darkMode = localStorage.getItem('darkMode') === 'true';
