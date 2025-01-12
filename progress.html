@@ -35,26 +35,56 @@
 
     <main class="fade-in">
         <div class="card">
-            <h2 class="card-title">Overview</h2>
+            <div class="stats-header">
+                <h2 class="card-title">Overview</h2>
+                <select id="timeRange" class="stats-select">
+                    <option value="7">Last 7 Days</option>
+                    <option value="30">Last 30 Days</option>
+                    <option value="90">Last 90 Days</option>
+                    <option value="all">All Time</option>
+                </select>
+            </div>
             <div class="progress-stats">
                 <div class="stat-item">
-                    <div class="stat-value">12</div>
+                    <div class="stat-value" id="totalWorkouts">-</div>
                     <div class="stat-label">Workouts</div>
                 </div>
                 <div class="stat-item">
-                    <div class="stat-value">8</div>
-                    <div class="stat-label">PRs Set</div>
+                    <div class="stat-value" id="totalExercises">-</div>
+                    <div class="stat-label">Exercises</div>
                 </div>
             </div>
         </div>
 
         <div class="card">
             <h2 class="card-title">Personal Records</h2>
-            <div id="pr-list">
-                <!-- PRs will be added here dynamically -->
+            <div id="prList" class="pr-list">
+                <!-- PRs will be added here -->
+            </div>
+        </div>
+
+        <div class="card">
+            <h2 class="card-title">Workout History</h2>
+            <div id="workoutHistory" class="workout-history">
+                <!-- Workout history will be added here -->
             </div>
         </div>
     </main>
+
+    <!-- Workout Details Modal -->
+    <div id="workoutDetailsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="workoutDate">Workout Details</h2>
+                <button type="button" class="modal-close" onclick="hideWorkoutDetails()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div id="workoutDetails" class="workout-details">
+                <!-- Workout details will be added here -->
+            </div>
+        </div>
+    </div>
 
     <nav class="nav-bar">
         <a href="index.html" class="nav-item">

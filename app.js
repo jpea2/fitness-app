@@ -20,6 +20,13 @@ let exerciseData = {
 function showModal() {
     document.getElementById('modal').style.display = 'block';
     document.getElementById('exerciseForm').reset();
+    
+    // Clear existing sets
+    const setsContainer = document.getElementById('sets');
+    setsContainer.innerHTML = '';
+    
+    // Add default set
+    addSet();
 }
 
 function hideModal() {
@@ -206,9 +213,233 @@ function loadFromLocalStorage() {
     }
 }
 
-// Initialize
+// Initialize workout date to today
 document.addEventListener('DOMContentLoaded', () => {
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('workoutDate').value = today;
     loadFromLocalStorage();
     updateExerciseList();
     updateWorkoutDisplay();
+    loadProgress();
 });
+
+function saveWorkout() {
+    const workoutDate = document.getElementById('workoutDate').value;
+    const workoutData = JSON.parse(localStorage.getItem('workoutData')) || {};
+    
+    if (!workoutData || Object.keys(workoutData).length === 0) {
+        alert('Please add at least one exercise to your workout before saving.');
+        return;
+    }
+    
+    // Get saved workouts or initialize empty object
+    const savedWorkouts = JSON.parse(localStorage.getItem('savedWorkouts')) || {};
+    
+    // Save workout data with date
+    savedWorkouts[workoutDate] = {
+        exercises: workoutData,
+        timestamp: new Date().toISOString()
+    };
+    
+    // Save to localStorage
+    localStorage.setItem('savedWorkouts', JSON.stringify(savedWorkouts));
+    
+    // Show workout summary
+    showWorkoutSummary(workoutData);
+}
+
+function showWorkoutSummary(workoutData) {
+    const summaryDiv = document.getElementById('workoutSummary');
+    summaryDiv.innerHTML = '';
+    
+    Object.entries(workoutData).forEach(([exercise, data]) => {
+        const summaryItem = document.createElement('div');
+        summaryItem.className = 'summary-item';
+        
+        const sets = data.sets.map(set => `${set.weight}kg × ${set.reps}`).join(', ');
+        
+        summaryItem.innerHTML = `
+            <span class="summary-exercise">${exercise}</span>
+            <span class="summary-sets">${sets}</span>
+        `;
+        
+        summaryDiv.appendChild(summaryItem);
+    });
+    
+    // Show the save workout modal
+    document.getElementById('saveWorkoutModal').style.display = 'block';
+}
+
+function hideSaveWorkoutModal() {
+    document.getElementById('saveWorkoutModal').style.display = 'none';
+}
+
+function startNewWorkout() {
+    // Clear current workout data
+    localStorage.removeItem('workoutData');
+    
+    // Reset date to today
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('workoutDate').value = today;
+    
+    // Clear exercises display
+    document.getElementById('exercises-container').innerHTML = '';
+    
+    // Hide the modal
+    hideSaveWorkoutModal();
+}
+
+function viewProgress() {
+    window.location.href = 'progress.html';
+}
+
+// Progress page functions
+function loadProgress() {
+    if (window.location.pathname.includes('progress.html')) {
+        const timeRange = document.getElementById('timeRange');
+        timeRange.addEventListener('change', updateProgress);
+        updateProgress();
+    }
+}
+
+function updateProgress() {
+    const timeRange = document.getElementById('timeRange').value;
+    const savedWorkouts = JSON.parse(localStorage.getItem('savedWorkouts')) || {};
+    const workouts = Object.entries(savedWorkouts);
+    
+    // Sort workouts by date (newest first)
+    workouts.sort((a, b) => new Date(b[0]) - new Date(a[0]));
+    
+    // Filter workouts based on time range
+    const filteredWorkouts = filterWorkoutsByTimeRange(workouts, timeRange);
+    
+    // Update stats
+    updateStats(filteredWorkouts);
+    
+    // Update PRs
+    updatePRs(filteredWorkouts);
+    
+    // Update workout history
+    updateWorkoutHistory(filteredWorkouts);
+}
+
+function filterWorkoutsByTimeRange(workouts, days) {
+    if (days === 'all') return workouts;
+    
+    const cutoffDate = new Date();
+    cutoffDate.setDate(cutoffDate.getDate() - parseInt(days));
+    
+    return workouts.filter(([date]) => new Date(date) >= cutoffDate);
+}
+
+function updateStats(workouts) {
+    const totalWorkouts = workouts.length;
+    const totalExercises = workouts.reduce((total, [_, workout]) => {
+        return total + Object.keys(workout.exercises).length;
+    }, 0);
+    
+    document.getElementById('totalWorkouts').textContent = totalWorkouts;
+    document.getElementById('totalExercises').textContent = totalExercises;
+}
+
+function updatePRs(workouts) {
+    const prList = document.getElementById('prList');
+    const prs = calculatePRs(workouts);
+    
+    prList.innerHTML = '';
+    Object.entries(prs).forEach(([exercise, pr]) => {
+        const prItem = document.createElement('div');
+        prItem.className = 'pr-item';
+        prItem.innerHTML = `
+            <span class="pr-exercise">${exercise}</span>
+            <span class="pr-value">${pr}kg</span>
+        `;
+        prList.appendChild(prItem);
+    });
+}
+
+function calculatePRs(workouts) {
+    const prs = {};
+    
+    workouts.forEach(([_, workout]) => {
+        Object.entries(workout.exercises).forEach(([exercise, data]) => {
+            const maxWeight = Math.max(...data.sets.map(set => parseFloat(set.weight) || 0));
+            if (!prs[exercise] || maxWeight > prs[exercise]) {
+                prs[exercise] = maxWeight;
+            }
+        });
+    });
+    
+    return prs;
+}
+
+function updateWorkoutHistory(workouts) {
+    const historyContainer = document.getElementById('workoutHistory');
+    historyContainer.innerHTML = '';
+    
+    workouts.forEach(([date, workout]) => {
+        const workoutItem = document.createElement('div');
+        workoutItem.className = 'workout-item';
+        workoutItem.onclick = () => showWorkoutDetails(date, workout);
+        
+        const exerciseCount = Object.keys(workout.exercises).length;
+        const formattedDate = new Date(date).toLocaleDateString('en-US', {
+            weekday: 'short',
+            month: 'short',
+            day: 'numeric'
+        });
+        
+        workoutItem.innerHTML = `
+            <span class="workout-date">${formattedDate}</span>
+            <div class="workout-meta">
+                <span>${exerciseCount} exercise${exerciseCount !== 1 ? 's' : ''}</span>
+                <i class="fas fa-chevron-right"></i>
+            </div>
+        `;
+        
+        historyContainer.appendChild(workoutItem);
+    });
+}
+
+function showWorkoutDetails(date, workout) {
+    const modal = document.getElementById('workoutDetailsModal');
+    const details = document.getElementById('workoutDetails');
+    const dateTitle = document.getElementById('workoutDate');
+    
+    const formattedDate = new Date(date).toLocaleDateString('en-US', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
+    
+    dateTitle.textContent = formattedDate;
+    details.innerHTML = '';
+    
+    Object.entries(workout.exercises).forEach(([exercise, data]) => {
+        const exerciseGroup = document.createElement('div');
+        exerciseGroup.className = 'exercise-group';
+        
+        const setsList = data.sets.map((set, index) => `
+            <div class="set-item">
+                <span>Set ${index + 1}:</span>
+                <span>${set.weight}kg × ${set.reps}</span>
+            </div>
+        `).join('');
+        
+        exerciseGroup.innerHTML = `
+            <div class="exercise-name">${exercise}</div>
+            <div class="set-list">
+                ${setsList}
+            </div>
+        `;
+        
+        details.appendChild(exerciseGroup);
+    });
+    
+    modal.style.display = 'block';
+}
+
+function hideWorkoutDetails() {
+    document.getElementById('workoutDetailsModal').style.display = 'none';
+}
