@@ -352,7 +352,7 @@ function updatePRs(workouts) {
         prItem.className = 'pr-item';
         prItem.innerHTML = `
             <span class="pr-exercise">${exercise}</span>
-            <span class="pr-value">${pr}kg</span>
+            <span class="pr-value">${pr.weight}kg × ${pr.reps} reps</span>
         `;
         prList.appendChild(prItem);
     });
@@ -363,10 +363,20 @@ function calculatePRs(workouts) {
     
     workouts.forEach(([_, workout]) => {
         Object.entries(workout.exercises).forEach(([exercise, data]) => {
-            const maxWeight = Math.max(...data.sets.map(set => parseFloat(set.weight) || 0));
-            if (!prs[exercise] || maxWeight > prs[exercise]) {
-                prs[exercise] = maxWeight;
-            }
+            data.sets.forEach(set => {
+                const weight = parseFloat(set.weight) || 0;
+                const reps = parseInt(set.reps) || 0;
+                
+                // Calculate total volume (weight × reps) for comparison
+                const volume = weight * reps;
+                
+                if (!prs[exercise] || volume > (prs[exercise].weight * prs[exercise].reps)) {
+                    prs[exercise] = {
+                        weight: weight,
+                        reps: reps
+                    };
+                }
+            });
         });
     });
     
