@@ -34,7 +34,6 @@ function addSet() {
     const setDiv = document.createElement('div');
     setDiv.className = 'form-group';
     setDiv.innerHTML = `
-        <label>Set ${setNumber}:</label>
         <input type="number" placeholder="Weight (kg)" required>
         <input type="number" placeholder="Reps" required>
         <button type="button" onclick="removeSet(this)" class="remove-set-btn">
@@ -43,6 +42,9 @@ function addSet() {
     `;
     
     setsContainer.appendChild(setDiv);
+    
+    // Scroll to the new set
+    setDiv.scrollIntoView({ behavior: 'smooth', block: 'end' });
 }
 
 function removeSet(button) {
@@ -55,7 +57,9 @@ function updateSetNumbers() {
     const sets = document.querySelectorAll('#sets .form-group');
     sets.forEach((set, index) => {
         const label = set.querySelector('label');
-        label.textContent = `Set ${index + 1}:`;
+        if (label) {
+            label.textContent = `Set ${index + 1}:`;
+        }
     });
 }
 

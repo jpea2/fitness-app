@@ -4,8 +4,14 @@ const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Disable caching in development
+app.use((req, res, next) => {
+    res.set('Cache-Control', 'no-store');
+    next();
+});
+
 // Serve static files from the root directory
-app.use(express.static(__dirname));
+app.use(express.static(__dirname, { etag: false }));
 
 // Enable JSON parsing for POST requests
 app.use(express.json());

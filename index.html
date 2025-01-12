@@ -48,29 +48,27 @@
 
     <!-- Modal for adding exercises -->
     <div id="modal" class="modal">
-        <div class="modal-content fade-in">
-            <span class="close" onclick="hideModal()">&times;</span>
-            <h2 id="exerciseName">Add Exercise</h2>
+        <div class="modal-content">
+            <h2 class="modal-title">Add Exercise</h2>
             <form id="exerciseForm">
                 <div class="form-group">
-                    <label for="exercise">Exercise:</label>
-                    <input type="text" id="exercise" required>
+                    <select id="exercise" required>
+                        <option value="">Select Exercise</option>
+                        <option value="Squats">Squats</option>
+                        <option value="Bench Press">Bench Press</option>
+                        <option value="Deadlift">Deadlift</option>
+                    </select>
                 </div>
                 <div id="sets">
-                    <div class="form-group">
-                        <label>Set 1:</label>
-                        <input type="number" placeholder="Weight (kg)" required>
-                        <input type="number" placeholder="Reps" required>
-                        <button type="button" onclick="removeSet(this)" class="remove-set-btn">
-                            <i class="fas fa-minus"></i>
-                        </button>
-                    </div>
+                    <!-- Sets will be added here -->
                 </div>
-                <button type="button" onclick="addSet()" class="button button-secondary">
-                    <i class="fas fa-plus"></i> Add Set
-                </button>
-                <div class="form-buttons">
-                    <button type="submit" class="button button-primary">Save Exercise</button>
+                <div class="form-group">
+                    <button type="button" onclick="addSet()" class="button button-secondary">
+                        <i class="fas fa-plus"></i> Add Set
+                    </button>
+                    <button type="submit" class="button button-primary">
+                        <i class="fas fa-save"></i> Save
+                    </button>
                 </div>
             </form>
         </div>
