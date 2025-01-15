@@ -332,6 +332,8 @@ function saveWorkout() {
     const workoutDate = document.getElementById('workoutDate').value;
     const workoutData = JSON.parse(localStorage.getItem('workoutData')) || {};
     
+    console.log('Current workout data:', workoutData);
+    
     if (!workoutData || Object.keys(workoutData).length === 0) {
         alert('Please add at least one exercise to your workout before saving.');
         return;
@@ -346,20 +348,38 @@ function saveWorkout() {
         timestamp: new Date().toISOString()
     };
     
+    console.log('Saving workout:', savedWorkouts[workoutDate]);
+    
     // Save to localStorage
     localStorage.setItem('savedWorkouts', JSON.stringify(savedWorkouts));
     
-    // Show workout summary
+    // Show workout summary with the current workout data
     showWorkoutSummary(workoutData);
+    
+    // Clear current workout data and start new workout after showing summary
+    localStorage.removeItem('workoutData');
+    startNewWorkout();
 }
 
 function showWorkoutSummary(workoutData) {
+    console.log('Showing workout summary for:', workoutData);
     const summaryDiv = document.getElementById('workoutSummary');
     summaryDiv.innerHTML = '';
     
+    if (!workoutData || typeof workoutData !== 'object') {
+        console.error('Invalid workout data:', workoutData);
+        return;
+    }
+
     Object.entries(workoutData).forEach(([exercise, data]) => {
         const summaryItem = document.createElement('div');
         summaryItem.className = 'summary-item';
+        
+        if (!data || !data.sets) {
+            console.error('Invalid exercise data for:', exercise);
+            console.log('Data:', data);
+            return;
+        }
         
         const sets = data.sets.map(set => `${set.weight}kg × ${set.reps}`).join(', ');
         
@@ -371,8 +391,13 @@ function showWorkoutSummary(workoutData) {
         summaryDiv.appendChild(summaryItem);
     });
     
-    // Show the save workout modal
-    document.getElementById('saveWorkoutModal').style.display = 'block';
+    // Show the summary modal
+    const modal = document.getElementById('saveWorkoutModal');
+    if (modal) {
+        modal.style.display = 'block';
+    } else {
+        console.error('Save workout modal not found');
+    }
 }
 
 function hideSaveWorkoutModal() {
