@@ -13,7 +13,7 @@ if ('serviceWorker' in navigator) {
 
 // Exercise data management
 let exerciseData = {
-    exercises: ['Squats', 'Bench Press', 'Deadlift'] // Default exercises only for first time
+    exercises: ['Squats', 'Bench Press', 'Deadlift'] // Initialize with default exercises
 };
 
 // Modal management
@@ -160,78 +160,30 @@ function createExerciseCard(exercise, data) {
     `).join('');
     
     card.innerHTML = `
-        <div class="exercise-header">
-            <div class="exercise-name">${exercise}</div>
-            <button class="button button-danger remove-exercise">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
+        <div class="exercise-name">${exercise}</div>
         <div class="sets-container">${sets}</div>
         <div class="pr-info">PR: ${data.pr || 'Not set'}</div>
     `;
     
-    // Add click event listener to remove button
-    const removeButton = card.querySelector('.remove-exercise');
-    console.log('Setting up remove button for:', exercise);
-    removeButton.addEventListener('click', (e) => {
-        console.log('Remove button clicked for:', exercise);
-        e.preventDefault();
-        e.stopPropagation();
-        removeExerciseFromWorkout(exercise);
-    });
-    
     return card;
 }
 
-function removeExerciseFromWorkout(exerciseName) {
-    console.log('Removing exercise:', exerciseName);
-    const workoutDate = document.getElementById('workoutDate').value;
-    console.log('Current workout date:', workoutDate);
-    let workoutData = JSON.parse(localStorage.getItem('workoutData')) || {};
-    console.log('Current workout data:', workoutData);
-    
-    if (workoutData[workoutDate] && workoutData[workoutDate].exercises) {
-        console.log('Found exercises for date, deleting:', exerciseName);
-        delete workoutData[workoutDate].exercises[exerciseName];
-        localStorage.setItem('workoutData', JSON.stringify(workoutData));
-        console.log('Updated workout data:', workoutData);
-        updateWorkoutDisplay();
-    } else {
-        console.log('No exercises found for date:', workoutDate);
-    }
-}
-
 function updateWorkoutDisplay() {
-    console.log('Updating workout display');
     const container = document.getElementById('exercises-container');
-    if (!container) {
-        console.log('Container not found');
-        return;
-    }
+    if (!container) return;
     
     const workoutData = JSON.parse(localStorage.getItem('workoutData')) || {};
-    const workoutDate = document.getElementById('workoutDate').value;
-    console.log('Display workout data for date:', workoutDate);
-    console.log('Workout data:', workoutData);
-    
     container.innerHTML = '';
     
-    if (workoutData[workoutDate] && workoutData[workoutDate].exercises) {
-        console.log('Found exercises for date:', Object.keys(workoutData[workoutDate].exercises));
-        Object.entries(workoutData[workoutDate].exercises).forEach(([exercise, data]) => {
-            console.log('Creating card for exercise:', exercise);
-            const card = createExerciseCard(exercise, data);
-            container.appendChild(card);
-        });
-    } else {
-        console.log('No exercises found for date:', workoutDate);
-    }
+    Object.entries(workoutData).forEach(([exercise, data]) => {
+        const card = createExerciseCard(exercise, data);
+        container.appendChild(card);
+    });
 }
 
 // Form submission
 document.getElementById('exerciseForm')?.addEventListener('submit', function(e) {
     e.preventDefault();
-    console.log('Form submitted');
     
     const exercise = document.getElementById('exercise').value;
     const sets = [];
@@ -244,22 +196,10 @@ document.getElementById('exerciseForm')?.addEventListener('submit', function(e) 
         });
     });
     
-    console.log('Adding exercise:', exercise, 'with sets:', sets);
+    const workoutData = JSON.parse(localStorage.getItem('workoutData')) || {};
+    workoutData[exercise] = { sets };
     
-    const workoutDate = document.getElementById('workoutDate').value;
-    let workoutData = JSON.parse(localStorage.getItem('workoutData')) || {};
-    
-    // Initialize the structure if it doesn't exist
-    if (!workoutData[workoutDate]) {
-        workoutData[workoutDate] = { exercises: {} };
-    }
-    
-    // Add the exercise to the current date's exercises
-    workoutData[workoutDate].exercises[exercise] = { sets };
-    
-    console.log('Updated workout data:', workoutData);
     localStorage.setItem('workoutData', JSON.stringify(workoutData));
-    
     updateWorkoutDisplay();
     hideModal();
 });
@@ -283,15 +223,23 @@ function saveToLocalStorage() {
 function loadFromLocalStorage() {
     const savedData = localStorage.getItem('exerciseData');
     if (savedData) {
-        // Load saved exercises without enforcing defaults
-        exerciseData = JSON.parse(savedData);
+        const parsedData = JSON.parse(savedData);
+        // Ensure we have the default exercises even if loading from storage
+        exerciseData = {
+            exercises: Array.from(new Set([
+                'Squats',
+                'Bench Press',
+                'Deadlift',
+                ...(parsedData.exercises || [])
+            ]))
+        };
     } else {
-        // Only set default exercises for first-time users
+        // If no saved data, initialize with default exercises
         exerciseData = {
             exercises: ['Squats', 'Bench Press', 'Deadlift']
         };
-        saveToLocalStorage();
     }
+    saveToLocalStorage();
     
     // Load dark mode preference
     const darkMode = localStorage.getItem('darkMode') === 'true';
@@ -332,8 +280,6 @@ function saveWorkout() {
     const workoutDate = document.getElementById('workoutDate').value;
     const workoutData = JSON.parse(localStorage.getItem('workoutData')) || {};
     
-    console.log('Current workout data:', workoutData);
-    
     if (!workoutData || Object.keys(workoutData).length === 0) {
         alert('Please add at least one exercise to your workout before saving.');
         return;
@@ -348,38 +294,20 @@ function saveWorkout() {
         timestamp: new Date().toISOString()
     };
     
-    console.log('Saving workout:', savedWorkouts[workoutDate]);
-    
     // Save to localStorage
     localStorage.setItem('savedWorkouts', JSON.stringify(savedWorkouts));
     
-    // Show workout summary with the current workout data
+    // Show workout summary
     showWorkoutSummary(workoutData);
-    
-    // Clear current workout data and start new workout after showing summary
-    localStorage.removeItem('workoutData');
-    startNewWorkout();
 }
 
 function showWorkoutSummary(workoutData) {
-    console.log('Showing workout summary for:', workoutData);
     const summaryDiv = document.getElementById('workoutSummary');
     summaryDiv.innerHTML = '';
     
-    if (!workoutData || typeof workoutData !== 'object') {
-        console.error('Invalid workout data:', workoutData);
-        return;
-    }
-
     Object.entries(workoutData).forEach(([exercise, data]) => {
         const summaryItem = document.createElement('div');
         summaryItem.className = 'summary-item';
-        
-        if (!data || !data.sets) {
-            console.error('Invalid exercise data for:', exercise);
-            console.log('Data:', data);
-            return;
-        }
         
         const sets = data.sets.map(set => `${set.weight}kg × ${set.reps}`).join(', ');
         
@@ -391,13 +319,8 @@ function showWorkoutSummary(workoutData) {
         summaryDiv.appendChild(summaryItem);
     });
     
-    // Show the summary modal
-    const modal = document.getElementById('saveWorkoutModal');
-    if (modal) {
-        modal.style.display = 'block';
-    } else {
-        console.error('Save workout modal not found');
-    }
+    // Show the save workout modal
+    document.getElementById('saveWorkoutModal').style.display = 'block';
 }
 
 function hideSaveWorkoutModal() {
