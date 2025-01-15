@@ -163,9 +163,29 @@ function createExerciseCard(exercise, data) {
         <div class="exercise-name">${exercise}</div>
         <div class="sets-container">${sets}</div>
         <div class="pr-info">PR: ${data.pr || 'Not set'}</div>
+        <button class="button button-danger remove-exercise">Remove</button>
     `;
     
+    // Add click event listener to remove button
+    const removeButton = card.querySelector('.remove-exercise');
+    removeButton.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        removeExerciseFromWorkout(exercise);
+    });
+    
     return card;
+}
+
+function removeExerciseFromWorkout(exerciseName) {
+    const workoutDate = document.getElementById('workoutDate').value;
+    let workoutData = JSON.parse(localStorage.getItem('workoutData')) || {};
+    
+    if (workoutData[exerciseName]) {
+        delete workoutData[exerciseName];
+        localStorage.setItem('workoutData', JSON.stringify(workoutData));
+        updateWorkoutDisplay();
+    }
 }
 
 function updateWorkoutDisplay() {
