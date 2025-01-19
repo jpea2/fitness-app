@@ -91,8 +91,8 @@ function updateExerciseList() {
         li.className = 'settings-item';
         li.innerHTML = `
             <span>${exercise}</span>
-            <button onclick="removeExercise('${exercise}')" class="button button-danger">
-                <i class="fas fa-trash"></i>
+            <button onclick="removeExercise('${exercise}')" class="delete-button">
+                <i class="fas fa-times"></i>
             </button>
         `;
         list.appendChild(li);
