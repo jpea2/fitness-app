@@ -759,3 +759,20 @@ input:hover {
 .modern-input:hover {
     border-color: #a0a0a0;
 }
+
+/* Exercise list delete buttons */
+.settings-list .delete-button {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    opacity: 0.6;
+    padding: var(--spacing-xs);
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+}
+
+.settings-list .delete-button:hover {
+    opacity: 1;
+    color: var(--danger-color);
+}
