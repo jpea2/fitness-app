@@ -16,6 +16,115 @@ let exerciseData = {
     exercises: [] // Initialize empty, will be populated from storage or defaults
 };
 
+// Load exercises from localStorage
+function loadExercises() {
+    try {
+        const savedExercises = localStorage.getItem('exercises');
+        exerciseData.exercises = savedExercises ? JSON.parse(savedExercises) : [
+            'Bench Press',
+            'Squat',
+            'Deadlift',
+            'Pull-ups'
+        ];
+        updateExerciseList();
+        updateExerciseDropdown();
+    } catch (error) {
+        console.error('Error loading exercises:', error);
+        // Fallback to defaults if there's an error
+        exerciseData.exercises = ['Bench Press', 'Squat', 'Deadlift', 'Pull-ups'];
+    }
+}
+
+// Save exercises to localStorage
+function saveExercises() {
+    try {
+        localStorage.setItem('exercises', JSON.stringify(exerciseData.exercises));
+    } catch (error) {
+        console.error('Error saving exercises:', error);
+        alert('Failed to save exercises. Please try again.');
+    }
+}
+
+// Exercise list management
+function addNewExercise() {
+    const input = document.getElementById('newExercise');
+    const exerciseName = input.value.trim();
+    
+    if (!exerciseName) {
+        alert('Please enter an exercise name');
+        return;
+    }
+    
+    if (exerciseData.exercises.includes(exerciseName)) {
+        alert('This exercise already exists');
+        return;
+    }
+    
+    exerciseData.exercises.push(exerciseName);
+    saveExercises();
+    updateExerciseList();
+    updateExerciseDropdown();
+    input.value = '';
+}
+
+function removeExercise(exercise) {
+    if (!confirm(`Are you sure you want to remove ${exercise}?`)) {
+        return;
+    }
+    
+    const index = exerciseData.exercises.indexOf(exercise);
+    if (index > -1) {
+        exerciseData.exercises.splice(index, 1);
+        saveExercises();
+        updateExerciseList();
+        updateExerciseDropdown();
+    }
+}
+
+// Update the exercise list in settings
+function updateExerciseList() {
+    const list = document.getElementById('exercise-list');
+    if (!list) return;
+    
+    list.innerHTML = '';
+    exerciseData.exercises.forEach(exercise => {
+        const li = document.createElement('li');
+        li.className = 'settings-item';
+        li.innerHTML = `
+            <span>${exercise}</span>
+            <button onclick="removeExercise('${exercise}')" class="button button-danger">
+                <i class="fas fa-trash"></i>
+            </button>
+        `;
+        list.appendChild(li);
+    });
+}
+
+// Update the exercise dropdown in the workout form
+function updateExerciseDropdown() {
+    const select = document.getElementById('exercise');
+    if (!select) return;
+    
+    // Save the current selection
+    const currentValue = select.value;
+    
+    // Clear existing options except the first one
+    select.innerHTML = '<option value="">Select Exercise</option>';
+    
+    // Add exercise options
+    exerciseData.exercises.forEach(exercise => {
+        const option = document.createElement('option');
+        option.value = exercise;
+        option.textContent = exercise;
+        select.appendChild(option);
+    });
+    
+    // Restore the selection if it still exists
+    if (exerciseData.exercises.includes(currentValue)) {
+        select.value = currentValue;
+    }
+}
+
 // Modal management
 function showModal() {
     document.getElementById('modal').style.display = 'block';
@@ -68,86 +177,6 @@ function updateSetNumbers() {
             label.textContent = `Set ${index + 1}:`;
         }
     });
-}
-
-// Exercise list management
-function addNewExercise() {
-    const input = document.getElementById('newExercise');
-    const exerciseName = input.value.trim();
-    
-    if (!exerciseName) {
-        alert('Please enter an exercise name');
-        return;
-    }
-    
-    if (exerciseData.exercises.includes(exerciseName)) {
-        alert('This exercise already exists');
-        return;
-    }
-    
-    exerciseData.exercises.push(exerciseName);
-    updateExerciseList();
-    input.value = '';
-}
-
-function removeExercise(exercise) {
-    if (!confirm(`Are you sure you want to remove ${exercise}?`)) {
-        return;
-    }
-    
-    const index = exerciseData.exercises.indexOf(exercise);
-    if (index > -1) {
-        exerciseData.exercises.splice(index, 1);
-        updateExerciseList();
-        saveToLocalStorage();
-    }
-}
-
-function updateExerciseList() {
-    const list = document.getElementById('exercise-list');
-    if (!list) return;
-    
-    list.innerHTML = '';
-    exerciseData.exercises.forEach(exercise => {
-        const li = document.createElement('li');
-        li.className = 'settings-item';
-        li.innerHTML = `
-            <span>${exercise}</span>
-            <button onclick="removeExercise('${exercise}')" class="remove-exercise-btn" title="Remove ${exercise}">
-                <i class="fas fa-xmark"></i>
-            </button>
-        `;
-        list.appendChild(li);
-    });
-    
-    saveToLocalStorage();
-    updateExerciseDropdown();
-}
-
-function updateExerciseDropdown() {
-    const select = document.getElementById('exercise');
-    if (!select) return;
-    
-    // Save current selection if any
-    const currentValue = select.value;
-    
-    // Clear existing options except the first placeholder
-    while (select.options.length > 1) {
-        select.remove(1);
-    }
-    
-    // Add exercise options
-    exerciseData.exercises.forEach(exercise => {
-        const option = document.createElement('option');
-        option.value = exercise;
-        option.textContent = exercise;
-        select.appendChild(option);
-    });
-    
-    // Restore previous selection if it still exists
-    if (exerciseData.exercises.includes(currentValue)) {
-        select.value = currentValue;
-    }
 }
 
 // Workout management
@@ -280,6 +309,36 @@ function loadFromLocalStorage() {
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', () => {
     loadFromLocalStorage();
+    loadExercises();
+    
+    // Initialize theme color for all pages
+    const savedColor = localStorage.getItem('primaryColor') || '#007AFF';
+    document.documentElement.style.setProperty('--primary-color', savedColor);
+    
+    // Initialize dark mode toggle
+    const darkModeToggle = document.getElementById('darkModeToggle');
+    if (darkModeToggle) {
+        const isDarkMode = localStorage.getItem('darkMode') === 'true';
+        darkModeToggle.checked = isDarkMode;
+        document.body.classList.toggle('dark-mode', isDarkMode);
+        
+        darkModeToggle.addEventListener('change', (e) => {
+            document.body.classList.toggle('dark-mode', e.target.checked);
+            localStorage.setItem('darkMode', e.target.checked);
+        });
+    }
+    
+    // Initialize color picker if on settings page
+    const colorPicker = document.getElementById('primaryColorPicker');
+    if (colorPicker) {
+        colorPicker.value = savedColor;
+        
+        colorPicker.addEventListener('change', (e) => {
+            const newColor = e.target.value;
+            document.documentElement.style.setProperty('--primary-color', newColor);
+            localStorage.setItem('primaryColor', newColor);
+        });
+    }
     
     // Initialize workout date to today if the element exists
     const workoutDate = document.getElementById('workoutDate');
