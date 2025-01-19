@@ -399,6 +399,27 @@ header {
     color: var(--text-primary);
 }
 
+.remove-exercise-btn {
+    background: none;
+    border: none;
+    color: var(--danger-color);
+    padding: var(--spacing-sm);
+    cursor: pointer;
+    border-radius: var(--border-radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.remove-exercise-btn:hover {
+    background-color: rgba(255, 59, 48, 0.1);
+}
+
+.remove-exercise-btn i {
+    font-size: 1.2rem;
+}
+
 /* Switch toggle */
 .switch {
     position: relative;

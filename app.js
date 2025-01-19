@@ -13,7 +13,7 @@ if ('serviceWorker' in navigator) {
 
 // Exercise data management
 let exerciseData = {
-    exercises: ['Squats', 'Bench Press', 'Deadlift'] // Initialize with default exercises
+    exercises: [] // Initialize empty, will be populated from storage or defaults
 };
 
 // Modal management
@@ -95,9 +95,12 @@ function removeExercise(exercise) {
         return;
     }
     
-    exerciseData.exercises = exerciseData.exercises.filter(e => e !== exercise);
-    updateExerciseList();
-    saveToLocalStorage();
+    const index = exerciseData.exercises.indexOf(exercise);
+    if (index > -1) {
+        exerciseData.exercises.splice(index, 1);
+        updateExerciseList();
+        saveToLocalStorage();
+    }
 }
 
 function updateExerciseList() {
@@ -110,15 +113,15 @@ function updateExerciseList() {
         li.className = 'settings-item';
         li.innerHTML = `
             <span>${exercise}</span>
-            <button onclick="removeExercise('${exercise}')" class="remove-exercise-btn">
-                <i class="fas fa-times"></i>
+            <button onclick="removeExercise('${exercise}')" class="remove-exercise-btn" title="Remove ${exercise}">
+                <i class="fas fa-xmark"></i>
             </button>
         `;
         list.appendChild(li);
     });
     
     saveToLocalStorage();
-    updateExerciseDropdown(); // Update exercise dropdown after list changes
+    updateExerciseDropdown();
 }
 
 function updateExerciseDropdown() {
@@ -243,49 +246,47 @@ function saveToLocalStorage() {
 function loadFromLocalStorage() {
     const savedData = localStorage.getItem('exerciseData');
     if (savedData) {
-        const parsedData = JSON.parse(savedData);
-        // Ensure we have the default exercises even if loading from storage
-        exerciseData = {
-            exercises: Array.from(new Set([
-                'Squats',
-                'Bench Press',
-                'Deadlift',
-                ...(parsedData.exercises || [])
-            ]))
-        };
+        exerciseData = JSON.parse(savedData);
     } else {
-        // If no saved data, initialize with default exercises
+        // Only set default exercises if there's no saved data
         exerciseData = {
             exercises: ['Squats', 'Bench Press', 'Deadlift']
         };
+        saveToLocalStorage();
     }
-    saveToLocalStorage();
     
     // Load dark mode preference
     const darkMode = localStorage.getItem('darkMode') === 'true';
     if (darkMode) {
         document.body.classList.add('dark-mode');
-        document.getElementById('darkModeToggle').checked = true;
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        if (darkModeToggle) {
+            darkModeToggle.checked = true;
+        }
     }
     
     // Load units preference
-    const units = localStorage.getItem('units');
-    if (units) {
-        document.getElementById('unitsSelect').value = units;
+    const unitsSelect = document.getElementById('unitsSelect');
+    if (unitsSelect) {
+        const units = localStorage.getItem('units');
+        if (units) {
+            unitsSelect.value = units;
+        }
     }
     
     updateExerciseList();
 }
 
-// Initialize workout date to today
+// Initialize on page load
 document.addEventListener('DOMContentLoaded', () => {
-    const today = new Date().toISOString().split('T')[0];
-    document.getElementById('workoutDate').value = today;
     loadFromLocalStorage();
-    updateExerciseDropdown(); // Initialize exercise dropdown when page loads
-    updateExerciseList();
-    updateWorkoutDisplay();
-    loadProgress();
+    
+    // Initialize workout date to today if the element exists
+    const workoutDate = document.getElementById('workoutDate');
+    if (workoutDate) {
+        const today = new Date().toISOString().split('T')[0];
+        workoutDate.value = today;
+    }
 });
 
 // Initialize settings page
