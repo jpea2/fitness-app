@@ -21,17 +21,16 @@ function loadExercises() {
     try {
         const savedExercises = localStorage.getItem('exercises');
         exerciseData.exercises = savedExercises ? JSON.parse(savedExercises) : [
+            'Squats',
             'Bench Press',
-            'Squat',
-            'Deadlift',
-            'Pull-ups'
+            'Deadlift'
         ];
         updateExerciseList();
         updateExerciseDropdown();
     } catch (error) {
         console.error('Error loading exercises:', error);
         // Fallback to defaults if there's an error
-        exerciseData.exercises = ['Bench Press', 'Squat', 'Deadlift', 'Pull-ups'];
+        exerciseData.exercises = ['Squats', 'Bench Press', 'Deadlift'];
     }
 }
 
