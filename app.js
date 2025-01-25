@@ -20,73 +20,63 @@ let exerciseData = {
 function loadExercises() {
     try {
         const savedExercises = localStorage.getItem('exercises');
-        exerciseData.exercises = savedExercises ? JSON.parse(savedExercises) : [
-            'Squats',
-            'Bench Press',
-            'Deadlift'
-        ];
+        if (savedExercises) {
+            exerciseData.exercises = JSON.parse(savedExercises);
+        } else {
+            // Default exercises if none exist
+            exerciseData.exercises = [
+                'Squats',
+                'Bench Press',
+                'Deadlift',
+                'Rows',
+                'Shoulder Press'
+            ];
+            // Save defaults to localStorage
+            saveExercises();
+        }
+        
+        // Update UI elements
         updateExerciseList();
         updateExerciseDropdown();
+        
+        console.log('Loaded exercises:', exerciseData.exercises);
     } catch (error) {
         console.error('Error loading exercises:', error);
-        // Fallback to defaults if there's an error
+        alert('Error loading exercises. Using defaults.');
         exerciseData.exercises = ['Squats', 'Bench Press', 'Deadlift'];
+        saveExercises();
     }
 }
 
 // Save exercises to localStorage
 function saveExercises() {
     try {
+        // Remove any potential duplicates and empty values
+        exerciseData.exercises = [...new Set(exerciseData.exercises.filter(e => e))];
+        
         localStorage.setItem('exercises', JSON.stringify(exerciseData.exercises));
-    } catch (error) {
-        console.error('Error saving exercises:', error);
-        alert('Failed to save exercises. Please try again.');
-    }
-}
-
-// Exercise list management
-function addNewExercise() {
-    const input = document.getElementById('newExercise');
-    const exerciseName = input.value.trim();
-    
-    if (!exerciseName) {
-        alert('Please enter an exercise name');
-        return;
-    }
-    
-    if (exerciseData.exercises.includes(exerciseName)) {
-        alert('This exercise already exists');
-        return;
-    }
-    
-    exerciseData.exercises.push(exerciseName);
-    saveExercises();
-    updateExerciseList();
-    updateExerciseDropdown();
-    input.value = '';
-}
-
-function removeExercise(exercise) {
-    if (!confirm(`Are you sure you want to remove ${exercise}?`)) {
-        return;
-    }
-    
-    const index = exerciseData.exercises.indexOf(exercise);
-    if (index > -1) {
-        exerciseData.exercises.splice(index, 1);
-        saveExercises();
+        console.log('Saved exercises:', exerciseData.exercises);
+        
+        // Update UI after saving
         updateExerciseList();
         updateExerciseDropdown();
+    } catch (error) {
+        console.error('Error saving exercises:', error);
+        alert('Error saving exercises. Please try again.');
     }
 }
 
 // Update the exercise list in settings
 function updateExerciseList() {
     const list = document.getElementById('exercise-list');
-    if (!list) return;
+    if (!list) {
+        return; // Not on settings page
+    }
     
     list.innerHTML = '';
-    exerciseData.exercises.forEach(exercise => {
+    const sortedExercises = [...exerciseData.exercises].sort();
+    
+    sortedExercises.forEach(exercise => {
         const li = document.createElement('li');
         li.className = 'settings-item';
         li.innerHTML = `
@@ -102,7 +92,9 @@ function updateExerciseList() {
 // Update the exercise dropdown in the workout form
 function updateExerciseDropdown() {
     const select = document.getElementById('exercise');
-    if (!select) return;
+    if (!select) {
+        return; // Not on workout page
+    }
     
     // Save the current selection
     const currentValue = select.value;
@@ -110,8 +102,11 @@ function updateExerciseDropdown() {
     // Clear existing options except the first one
     select.innerHTML = '<option value="">Select Exercise</option>';
     
+    // Sort exercises alphabetically
+    const sortedExercises = [...exerciseData.exercises].sort();
+    
     // Add exercise options
-    exerciseData.exercises.forEach(exercise => {
+    sortedExercises.forEach(exercise => {
         const option = document.createElement('option');
         option.value = exercise;
         option.textContent = exercise;
@@ -121,6 +116,45 @@ function updateExerciseDropdown() {
     // Restore the selection if it still exists
     if (exerciseData.exercises.includes(currentValue)) {
         select.value = currentValue;
+    }
+}
+
+// Exercise list management
+function addNewExercise() {
+    const input = document.getElementById('newExercise');
+    if (!input) return;
+    
+    const exerciseName = input.value.trim();
+    
+    if (!exerciseName) {
+        alert('Please enter an exercise name');
+        return;
+    }
+    
+    if (exerciseData.exercises.includes(exerciseName)) {
+        alert('This exercise already exists');
+        return;
+    }
+    
+    // Add the exercise and save
+    exerciseData.exercises.push(exerciseName);
+    saveExercises(); // This will also update the UI
+    input.value = '';
+    
+    console.log('Added exercise:', exerciseName);
+}
+
+// Remove exercise
+function removeExercise(exercise) {
+    if (!exercise) return;
+    
+    if (confirm(`Are you sure you want to remove "${exercise}"?`)) {
+        const index = exerciseData.exercises.indexOf(exercise);
+        if (index > -1) {
+            exerciseData.exercises.splice(index, 1);
+            saveExercises(); // This will also update the UI
+            console.log('Removed exercise:', exercise);
+        }
     }
 }
 
@@ -268,49 +302,36 @@ document.getElementById('unitsSelect')?.addEventListener('change', function(e) {
     localStorage.setItem('units', e.target.value);
 });
 
-// Local storage management
-function saveToLocalStorage() {
-    localStorage.setItem('exerciseData', JSON.stringify(exerciseData));
-}
-
-function loadFromLocalStorage() {
-    const savedData = localStorage.getItem('exerciseData');
-    if (savedData) {
-        exerciseData = JSON.parse(savedData);
-    } else {
-        // Only set default exercises if there's no saved data
-        exerciseData = {
-            exercises: ['Squats', 'Bench Press', 'Deadlift']
-        };
-        saveToLocalStorage();
-    }
-    
-    // Load dark mode preference
-    const darkMode = localStorage.getItem('darkMode') === 'true';
-    if (darkMode) {
-        document.body.classList.add('dark-mode');
-        const darkModeToggle = document.getElementById('darkModeToggle');
-        if (darkModeToggle) {
-            darkModeToggle.checked = true;
-        }
-    }
-    
-    // Load units preference
-    const unitsSelect = document.getElementById('unitsSelect');
-    if (unitsSelect) {
-        const units = localStorage.getItem('units');
-        if (units) {
-            unitsSelect.value = units;
-        }
-    }
-    
-    updateExerciseList();
-}
-
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', () => {
-    loadFromLocalStorage();
+    // Load exercises first - this is the ONLY place we should load exercises
     loadExercises();
+    
+    // Set up event listener for adding exercises with Enter key
+    const newExerciseInput = document.getElementById('newExercise');
+    if (newExerciseInput) {
+        newExerciseInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                addNewExercise();
+            }
+        });
+    }
+    
+    // Set up event listeners for the exercise form
+    const exerciseForm = document.getElementById('exerciseForm');
+    if (exerciseForm) {
+        exerciseForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const exercise = document.getElementById('exercise').value;
+            if (!exercise) {
+                alert('Please select an exercise');
+                return;
+            }
+            addExerciseToWorkout(exercise);
+            hideModal();
+        });
+    }
     
     // Set default date to today
     const today = new Date().toISOString().split('T')[0];
@@ -384,8 +405,19 @@ function updateProgress() {
 if (window.location.pathname.includes('settings.html')) {
     document.addEventListener('DOMContentLoaded', () => {
         loadFromLocalStorage();
-        updateExerciseList();
     });
+}
+
+function loadFromLocalStorage() {
+    // Load other settings but NOT exercises
+    const darkMode = localStorage.getItem('darkMode') === 'true';
+    if (darkMode) {
+        document.body.classList.add('dark-mode');
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        if (darkModeToggle) {
+            darkModeToggle.checked = true;
+        }
+    }
 }
 
 function saveWorkout() {
@@ -561,6 +593,15 @@ function calculatePRs(workouts) {
     return prs;
 }
 
+function deleteWorkout(date) {
+    if (confirm('Are you sure you want to delete this workout?')) {
+        const savedWorkouts = JSON.parse(localStorage.getItem('savedWorkouts')) || {};
+        delete savedWorkouts[date];
+        localStorage.setItem('savedWorkouts', JSON.stringify(savedWorkouts));
+        updateProgress(); // Refresh the display
+    }
+}
+
 function updateWorkoutHistory(workouts) {
     console.log('Starting updateWorkoutHistory with workouts:', workouts);
     const historyContainer = document.getElementById('workoutHistory');
@@ -587,8 +628,8 @@ function updateWorkoutHistory(workouts) {
         const exerciseDetails = Object.entries(workout.exercises).map(([exercise, data]) => {
             const setsList = data.sets.map((set, index) => `
                 <div class="set-item">
-                    <span class="set-number">Set ${index + 1}</span>
-                    <span class="set-details">${set.weight}kg × ${set.reps}</span>
+                    <span>Set ${index + 1}:</span>
+                    <span>${set.weight}kg × ${set.reps}</span>
                 </div>
             `).join('');
             
@@ -609,6 +650,9 @@ function updateWorkoutHistory(workouts) {
                 <span class="workout-date">${formattedDate}</span>
                 <div class="workout-meta">
                     <span>${Object.keys(workout.exercises).length} exercise${Object.keys(workout.exercises).length !== 1 ? 's' : ''}</span>
+                </div>
+                <div class="workout-actions">
+                    <button onclick="deleteWorkout('${date}')" class="delete-workout-btn" aria-label="Delete workout">×</button>
                 </div>
             </div>
             <div class="workout-details">

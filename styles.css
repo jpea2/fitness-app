@@ -83,7 +83,7 @@ header {
 }
 
 .header-title {
-    font-size: 1.5rem;
+    font-size: 1rem;
     font-weight: 700;
     text-align: center;
     color: var(--text-primary);
@@ -391,17 +391,34 @@ header {
 
 .workout-header {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    margin-bottom: 12px;
-    padding-bottom: 8px;
-    border-bottom: 1px solid var(--border-color);
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.workout-actions {
+    display: flex;
+    align-items: center;
+}
+
+.delete-workout-btn {
+    background: none;
+    border: none;
+    color: #ef4444;
+    font-size: 1.5rem;
+    padding: 0.25rem 0.5rem;
+    cursor: pointer;
+    transition: color 0.2s;
+    line-height: 1;
+}
+
+.delete-workout-btn:hover {
+    color: #dc2626;
 }
 
 .workout-date {
-    font-size: 1.1em;
     font-weight: 600;
-    color: var(--text-color);
+    min-width: 100px;
 }
 
 .workout-meta {
