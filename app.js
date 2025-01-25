@@ -420,6 +420,17 @@ function saveWorkout() {
         localStorage.setItem('savedWorkouts', JSON.stringify(savedWorkouts));
         console.log('Saved to localStorage successfully');
         
+        // Clear the current workout data
+        localStorage.removeItem('workoutData');
+        console.log('Cleared current workout data');
+        
+        // Clear the exercises container
+        const exercisesContainer = document.getElementById('exercises-container');
+        if (exercisesContainer) {
+            exercisesContainer.innerHTML = '';
+            console.log('Cleared exercises container');
+        }
+        
         // Show workout summary
         showWorkoutSummary(workoutData);
 
