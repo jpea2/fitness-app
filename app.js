@@ -605,10 +605,14 @@ async function forceUpdate() {
             }
         }
 
-        // Clear caches
+        // Clear only the service worker cache
         if ('caches' in window) {
             const cacheNames = await caches.keys();
-            await Promise.all(cacheNames.map(cacheName => caches.delete(cacheName)));
+            await Promise.all(
+                cacheNames
+                    .filter(name => name.startsWith('fitness-app-v')) // Only clear our app's cache
+                    .map(cacheName => caches.delete(cacheName))
+            );
         }
 
         // Show success message
