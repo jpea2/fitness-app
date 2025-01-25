@@ -565,20 +565,43 @@ function updateWorkoutHistory(workouts) {
     workouts.forEach(([date, workout]) => {
         const workoutItem = document.createElement('div');
         workoutItem.className = 'workout-item';
-        workoutItem.onclick = () => showWorkoutDetails(date, workout);
         
-        const exerciseCount = Object.keys(workout.exercises).length;
         const formattedDate = new Date(date).toLocaleDateString('en-US', {
             weekday: 'short',
             month: 'short',
             day: 'numeric'
         });
         
+        // Create the workout details HTML
+        const exerciseDetails = Object.entries(workout.exercises).map(([exercise, data]) => {
+            const setsList = data.sets.map((set, index) => `
+                <div class="set-item">
+                    <span class="set-number">Set ${index + 1}</span>
+                    <span class="set-details">${set.weight}kg × ${set.reps}</span>
+                </div>
+            `).join('');
+            
+            return `
+                <div class="exercise-group">
+                    <div class="exercise-name-column">
+                        <div class="exercise-name">${exercise}</div>
+                    </div>
+                    <div class="sets-column">
+                        ${setsList}
+                    </div>
+                </div>
+            `;
+        }).join('');
+        
         workoutItem.innerHTML = `
-            <span class="workout-date">${formattedDate}</span>
-            <div class="workout-meta">
-                <span>${exerciseCount} exercise${exerciseCount !== 1 ? 's' : ''}</span>
-                <i class="fas fa-chevron-right"></i>
+            <div class="workout-header">
+                <span class="workout-date">${formattedDate}</span>
+                <div class="workout-meta">
+                    <span>${Object.keys(workout.exercises).length} exercise${Object.keys(workout.exercises).length !== 1 ? 's' : ''}</span>
+                </div>
+            </div>
+            <div class="workout-details">
+                ${exerciseDetails}
             </div>
         `;
         

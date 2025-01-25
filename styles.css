@@ -378,6 +378,95 @@ header {
     font-size: 0.875rem;
 }
 
+/* Workout History Styles */
+.workout-item {
+    display: flex;
+    flex-direction: column;
+    background: var(--card-background);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 16px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.workout-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.workout-date {
+    font-size: 1.1em;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.workout-meta {
+    color: var(--secondary-text);
+    font-size: 0.9em;
+}
+
+.workout-details {
+    padding-top: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.exercise-group {
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+}
+
+.exercise-name-column {
+    width: 120px;
+    flex-shrink: 0;
+}
+
+.sets-column {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.exercise-name {
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+.set-item {
+    display: grid;
+    grid-template-columns: 60px 1fr;
+    gap: 12px;
+    align-items: center;
+}
+
+.set-number {
+    color: var(--secondary-text);
+    font-size: 0.9em;
+}
+
+.set-details {
+    color: var(--text-color);
+}
+
+/* Make it responsive */
+@media (max-width: 480px) {
+    .exercise-name-column {
+        width: 100px;
+    }
+    
+    .set-item {
+        grid-template-columns: 50px 1fr;
+        gap: 8px;
+    }
+}
+
 /* Settings page */
 .settings-list {
     list-style: none;
