@@ -2,7 +2,7 @@
     "name": "TrackGymPro",
     "short_name": "TrackGymPro",
     "description": "Track your workouts, monitor progress, and achieve your fitness goals",
-    "start_url": "./index.html",
+    "start_url": "./index.html?standalone=true",
     "scope": ".",
     "display": "standalone",
     "display_override": ["fullscreen", "standalone"],
