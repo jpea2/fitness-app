@@ -312,42 +312,73 @@ document.addEventListener('DOMContentLoaded', () => {
     loadFromLocalStorage();
     loadExercises();
     
+    // Set default date to today
+    const today = new Date().toISOString().split('T')[0];
+    const dateInput = document.getElementById('workoutDate');
+    if (dateInput) {
+        dateInput.value = today;
+    }
+
+    // Add event listener for save workout button
+    const saveButton = document.getElementById('saveWorkoutBtn');
+    if (saveButton) {
+        console.log('Found save button, adding click listener');
+        saveButton.addEventListener('click', saveWorkout);
+    }
+
+    // Initialize progress page if we're on it
+    const timeRange = document.getElementById('timeRange');
+    if (timeRange) {
+        console.log('Initializing progress page...');
+        // Add change listener for time range
+        timeRange.addEventListener('change', updateProgress);
+        // Initial load of progress data
+        updateProgress();
+    }
+    
     // Initialize theme color for all pages
     const savedColor = localStorage.getItem('primaryColor') || '#007AFF';
     document.documentElement.style.setProperty('--primary-color', savedColor);
     
-    // Initialize dark mode toggle
-    const darkModeToggle = document.getElementById('darkModeToggle');
-    if (darkModeToggle) {
-        const isDarkMode = localStorage.getItem('darkMode') === 'true';
-        darkModeToggle.checked = isDarkMode;
-        document.body.classList.toggle('dark-mode', isDarkMode);
-        
-        darkModeToggle.addEventListener('change', (e) => {
-            document.body.classList.toggle('dark-mode', e.target.checked);
-            localStorage.setItem('darkMode', e.target.checked);
-        });
-    }
-    
     // Initialize color picker if on settings page
-    const colorPicker = document.getElementById('primaryColorPicker');
+    const colorPicker = document.getElementById('primaryColor');
     if (colorPicker) {
         colorPicker.value = savedColor;
-        
         colorPicker.addEventListener('change', (e) => {
             const newColor = e.target.value;
             document.documentElement.style.setProperty('--primary-color', newColor);
             localStorage.setItem('primaryColor', newColor);
         });
     }
-    
-    // Initialize workout date to today if the element exists
-    const workoutDate = document.getElementById('workoutDate');
-    if (workoutDate) {
-        const today = new Date().toISOString().split('T')[0];
-        workoutDate.value = today;
-    }
 });
+
+function updateProgress() {
+    console.log('Starting updateProgress function...');
+    const timeRange = document.getElementById('timeRange')?.value || 'all';
+    console.log('Selected time range:', timeRange);
+    
+    const savedWorkouts = JSON.parse(localStorage.getItem('savedWorkouts')) || {};
+    console.log('Retrieved saved workouts for progress:', savedWorkouts);
+    
+    const workouts = Object.entries(savedWorkouts);
+    
+    // Sort workouts by date (newest first)
+    workouts.sort((a, b) => new Date(b[0]) - new Date(a[0]));
+    console.log('Sorted workouts:', workouts);
+    
+    // Filter workouts based on time range
+    const filteredWorkouts = filterWorkoutsByTimeRange(workouts, timeRange);
+    console.log('Filtered workouts:', filteredWorkouts);
+    
+    // Update stats
+    updateStats(filteredWorkouts);
+    
+    // Update PRs
+    updatePRs(filteredWorkouts);
+    
+    // Update workout history
+    updateWorkoutHistory(filteredWorkouts);
+}
 
 // Initialize settings page
 if (window.location.pathname.includes('settings.html')) {
@@ -358,28 +389,51 @@ if (window.location.pathname.includes('settings.html')) {
 }
 
 function saveWorkout() {
-    const workoutDate = document.getElementById('workoutDate').value;
-    const workoutData = JSON.parse(localStorage.getItem('workoutData')) || {};
-    
-    if (!workoutData || Object.keys(workoutData).length === 0) {
-        alert('Please add at least one exercise to your workout before saving.');
-        return;
+    console.log('Save workout button clicked!');
+    try {
+        console.log('Starting saveWorkout function...');
+        const workoutDate = document.getElementById('workoutDate').value;
+        console.log('Workout date:', workoutDate);
+        
+        const workoutData = JSON.parse(localStorage.getItem('workoutData')) || {};
+        console.log('Current workout data to save:', workoutData);
+        
+        if (!workoutData || Object.keys(workoutData).length === 0) {
+            console.log('No workout data found');
+            alert('Please add at least one exercise to your workout before saving.');
+            return;
+        }
+        
+        // Get saved workouts or initialize empty object
+        const savedWorkouts = JSON.parse(localStorage.getItem('savedWorkouts')) || {};
+        console.log('Existing saved workouts:', savedWorkouts);
+        
+        // Save workout data with date
+        savedWorkouts[workoutDate] = {
+            exercises: workoutData,
+            timestamp: new Date().toISOString()
+        };
+        
+        console.log('Updated saved workouts:', savedWorkouts);
+        
+        // Save to localStorage
+        localStorage.setItem('savedWorkouts', JSON.stringify(savedWorkouts));
+        console.log('Saved to localStorage successfully');
+        
+        // Show workout summary
+        showWorkoutSummary(workoutData);
+
+        // Update progress page if it's open
+        const progressPage = document.getElementById('workoutHistory');
+        console.log('Progress page element found:', !!progressPage);
+        
+        if (progressPage) {
+            console.log('Attempting to update progress page...');
+            updateProgress();
+        }
+    } catch (error) {
+        console.error('Error in saveWorkout:', error);
     }
-    
-    // Get saved workouts or initialize empty object
-    const savedWorkouts = JSON.parse(localStorage.getItem('savedWorkouts')) || {};
-    
-    // Save workout data with date
-    savedWorkouts[workoutDate] = {
-        exercises: workoutData,
-        timestamp: new Date().toISOString()
-    };
-    
-    // Save to localStorage
-    localStorage.setItem('savedWorkouts', JSON.stringify(savedWorkouts));
-    
-    // Show workout summary
-    showWorkoutSummary(workoutData);
 }
 
 function showWorkoutSummary(workoutData) {
@@ -434,27 +488,6 @@ function loadProgress() {
         timeRange.addEventListener('change', updateProgress);
         updateProgress();
     }
-}
-
-function updateProgress() {
-    const timeRange = document.getElementById('timeRange').value;
-    const savedWorkouts = JSON.parse(localStorage.getItem('savedWorkouts')) || {};
-    const workouts = Object.entries(savedWorkouts);
-    
-    // Sort workouts by date (newest first)
-    workouts.sort((a, b) => new Date(b[0]) - new Date(a[0]));
-    
-    // Filter workouts based on time range
-    const filteredWorkouts = filterWorkoutsByTimeRange(workouts, timeRange);
-    
-    // Update stats
-    updateStats(filteredWorkouts);
-    
-    // Update PRs
-    updatePRs(filteredWorkouts);
-    
-    // Update workout history
-    updateWorkoutHistory(filteredWorkouts);
 }
 
 function filterWorkoutsByTimeRange(workouts, days) {
@@ -518,7 +551,15 @@ function calculatePRs(workouts) {
 }
 
 function updateWorkoutHistory(workouts) {
+    console.log('Starting updateWorkoutHistory with workouts:', workouts);
     const historyContainer = document.getElementById('workoutHistory');
+    
+    if (!historyContainer) {
+        console.log('Workout history container not found - likely not on progress page');
+        return;
+    }
+    
+    console.log('Clearing and updating workout history container');
     historyContainer.innerHTML = '';
     
     workouts.forEach(([date, workout]) => {
@@ -543,6 +584,7 @@ function updateWorkoutHistory(workouts) {
         
         historyContainer.appendChild(workoutItem);
     });
+    console.log('Finished updating workout history');
 }
 
 function showWorkoutDetails(date, workout) {
