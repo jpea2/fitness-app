@@ -18,7 +18,14 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #9ca3af;
+            overflow: hidden;
+            padding: 0;
+        }
+        .screenshot img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: top;
         }
     </style>
 </head>
@@ -89,13 +96,19 @@
             <h2 class="text-3xl font-bold text-center mb-16">See It In Action</h2>
             <div class="flex gap-8 overflow-x-auto pb-8 justify-center">
                 <div class="screenshot flex-shrink-0">
-                    <p>Dashboard Screenshot</p>
+                    <img src="Screenshots/dashboard.png" 
+                         alt="Workout tracking interface" 
+                         class="w-full h-full object-contain">
                 </div>
                 <div class="screenshot flex-shrink-0">
-                    <p>Workout View Screenshot</p>
+                    <img src="Screenshots/progress.png" 
+                         alt="Progress tracking view" 
+                         class="w-full h-full object-contain">
                 </div>
                 <div class="screenshot flex-shrink-0">
-                    <p>Progress Tracking Screenshot</p>
+                    <img src="Screenshots/workout.png" 
+                         alt="Settings and customization" 
+                         class="w-full h-full object-contain">
                 </div>
             </div>
         </div>
@@ -124,7 +137,7 @@
                     <span class="ml-3 text-lg">FitnessApp</span>
                 </div>
                 <div class="text-gray-400">
-                    © 2025 FitnessApp. All rights reserved.
+                    2025 FitnessApp. All rights reserved.
                 </div>
             </div>
         </div>
