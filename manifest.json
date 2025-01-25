@@ -5,7 +5,7 @@
     "start_url": "/fitness-app/index.html?standalone=true",
     "scope": "/fitness-app/",
     "display": "standalone",
-    "display_override": ["fullscreen", "standalone"],
+    "display_override": ["standalone"],
     "background_color": "#ffffff",
     "theme_color": "#4f46e5",
     "orientation": "portrait-primary",
