@@ -232,7 +232,6 @@ function createExerciseCard(exercise, data) {
             </button>
         </div>
         <div class="sets-container">${sets}</div>
-        <div class="pr-info">PR: ${data.pr || 'Not set'}</div>
     `;
     
     // Add click event listener to remove button
