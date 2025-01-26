@@ -225,17 +225,16 @@ function createExerciseCard(exercise, data) {
     `).join('');
     
     card.innerHTML = `
-        <div class="exercise-header">
-            <div class="exercise-name">${exercise}</div>
-            <button class="remove-exercise-btn">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
+        <div class="exercise-name">${exercise}</div>
         <div class="sets-container">${sets}</div>
+        <div class="pr-info">PR: ${data.pr || 'Not set'}</div>
+        <button class="button button-danger remove-exercise">
+            <i class="fas fa-times"></i>
+        </button>
     `;
     
     // Add click event listener to remove button
-    const removeButton = card.querySelector('.remove-exercise-btn');
+    const removeButton = card.querySelector('.remove-exercise');
     removeButton.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -263,10 +262,10 @@ function updateWorkoutDisplay() {
     const workoutData = JSON.parse(localStorage.getItem('workoutData')) || {};
     container.innerHTML = '';
     
-    for (const [exercise, data] of Object.entries(workoutData)) {
+    Object.entries(workoutData).forEach(([exercise, data]) => {
         const card = createExerciseCard(exercise, data);
         container.appendChild(card);
-    }
+    });
 }
 
 // Form submission
@@ -292,27 +291,21 @@ document.getElementById('exerciseForm')?.addEventListener('submit', function(e) 
     hideModal();
 });
 
-// Initialize common settings for all pages
-document.addEventListener('DOMContentLoaded', () => {
-    loadFromLocalStorage();
-    
-    // Initialize dark mode
-    const darkMode = localStorage.getItem('darkMode') === 'true';
-    if (darkMode) {
-        document.body.classList.add('dark-mode');
-    }
-    const darkModeToggle = document.getElementById('darkModeToggle');
-    if (darkModeToggle) {
-        darkModeToggle.checked = darkMode;
-        darkModeToggle.addEventListener('change', function(e) {
-            document.body.classList.toggle('dark-mode', e.target.checked);
-            localStorage.setItem('darkMode', e.target.checked);
-        });
-    }
+// Dark mode toggle
+document.getElementById('darkModeToggle')?.addEventListener('change', function(e) {
+    document.body.classList.toggle('dark-mode', e.target.checked);
+    localStorage.setItem('darkMode', e.target.checked);
+});
 
-    // Initialize theme color for all pages
-    const savedColor = localStorage.getItem('primaryColor') || '#007AFF';
-    document.documentElement.style.setProperty('--primary-color', savedColor);
+// Units selection
+document.getElementById('unitsSelect')?.addEventListener('change', function(e) {
+    localStorage.setItem('units', e.target.value);
+});
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', () => {
+    // Load exercises first - this is the ONLY place we should load exercises
+    loadExercises();
     
     // Set up event listener for adding exercises with Enter key
     const newExerciseInput = document.getElementById('newExercise');
@@ -363,49 +356,68 @@ document.addEventListener('DOMContentLoaded', () => {
         // Initial load of progress data
         updateProgress();
     }
+    
+    // Initialize theme color for all pages
+    const savedColor = localStorage.getItem('primaryColor') || '#007AFF';
+    document.documentElement.style.setProperty('--primary-color', savedColor);
+    
+    // Initialize color picker if on settings page
+    const colorPicker = document.getElementById('primaryColor');
+    if (colorPicker) {
+        colorPicker.value = savedColor;
+        colorPicker.addEventListener('change', (e) => {
+            const newColor = e.target.value;
+            document.documentElement.style.setProperty('--primary-color', newColor);
+            localStorage.setItem('primaryColor', newColor);
+        });
+    }
 });
 
-function loadFromLocalStorage() {
-    loadExercises(); // Load exercises on every page
-    // No need to handle dark mode here as it's handled globally
-    // Add any other settings loading logic here if needed
-}
-
-// Initialize dashboard page
-if (window.location.pathname.endsWith('index.html') || window.location.pathname === '/') {
-    document.addEventListener('DOMContentLoaded', () => {
-        updateWorkoutDisplay(); // This will load and display any saved workout data
-    });
-}
-
-// Initialize progress page
-if (window.location.pathname.includes('progress.html')) {
-    document.addEventListener('DOMContentLoaded', () => {
-        console.log('Initializing progress page...');
-        updateProgress();
-        
-        // Add event listener for time range changes
-        document.getElementById('timeRange')?.addEventListener('change', updateProgress);
-    });
+function updateProgress() {
+    console.log('Starting updateProgress function...');
+    const timeRange = document.getElementById('timeRange')?.value || 'all';
+    console.log('Selected time range:', timeRange);
+    
+    const savedWorkouts = JSON.parse(localStorage.getItem('savedWorkouts')) || {};
+    console.log('Retrieved saved workouts for progress:', savedWorkouts);
+    
+    const workouts = Object.entries(savedWorkouts);
+    
+    // Sort workouts by date (newest first)
+    workouts.sort((a, b) => new Date(b[0]) - new Date(a[0]));
+    console.log('Sorted workouts:', workouts);
+    
+    // Filter workouts based on time range
+    const filteredWorkouts = filterWorkoutsByTimeRange(workouts, timeRange);
+    console.log('Filtered workouts:', filteredWorkouts);
+    
+    // Update stats
+    updateStats(filteredWorkouts);
+    
+    // Update PRs
+    updatePRs(filteredWorkouts);
+    
+    // Update workout history
+    updateWorkoutHistory(filteredWorkouts);
 }
 
 // Initialize settings page
 if (window.location.pathname.includes('settings.html')) {
     document.addEventListener('DOMContentLoaded', () => {
-        // Initialize theme color picker
-        const colorPicker = document.getElementById('primaryColorPicker');
-        if (colorPicker) {
-            const savedColor = localStorage.getItem('primaryColor') || '#007AFF';
-            colorPicker.value = savedColor;
-            document.documentElement.style.setProperty('--primary-color', savedColor);
-            
-            colorPicker.addEventListener('change', (e) => {
-                const newColor = e.target.value;
-                document.documentElement.style.setProperty('--primary-color', newColor);
-                localStorage.setItem('primaryColor', newColor);
-            });
-        }
+        loadFromLocalStorage();
     });
+}
+
+function loadFromLocalStorage() {
+    // Load other settings but NOT exercises
+    const darkMode = localStorage.getItem('darkMode') === 'true';
+    if (darkMode) {
+        document.body.classList.add('dark-mode');
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        if (darkModeToggle) {
+            darkModeToggle.checked = true;
+        }
+    }
 }
 
 function saveWorkout() {
@@ -741,32 +753,4 @@ async function forceUpdate() {
         button.innerHTML = originalContent;
         button.disabled = false;
     }
-}
-
-function updateProgress() {
-    console.log('Starting updateProgress function...');
-    const timeRange = document.getElementById('timeRange')?.value || 'all';
-    console.log('Selected time range:', timeRange);
-    
-    const savedWorkouts = JSON.parse(localStorage.getItem('savedWorkouts')) || {};
-    console.log('Retrieved saved workouts for progress:', savedWorkouts);
-    
-    const workouts = Object.entries(savedWorkouts);
-    
-    // Sort workouts by date (newest first)
-    workouts.sort((a, b) => new Date(b[0]) - new Date(a[0]));
-    console.log('Sorted workouts:', workouts);
-    
-    // Filter workouts based on time range
-    const filteredWorkouts = filterWorkoutsByTimeRange(workouts, timeRange);
-    console.log('Filtered workouts:', filteredWorkouts);
-    
-    // Update stats
-    updateStats(filteredWorkouts);
-    
-    // Update PRs
-    updatePRs(filteredWorkouts);
-    
-    // Update workout history
-    updateWorkoutHistory(filteredWorkouts);
 }
