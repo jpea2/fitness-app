@@ -4,3 +4,6 @@ node_modules/
 .env
 # Custom scripts
 push.sh
+
+# windsurf rules
+.windsurfrules
