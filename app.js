@@ -225,16 +225,18 @@ function createExerciseCard(exercise, data) {
     `).join('');
     
     card.innerHTML = `
-        <div class="exercise-name">${exercise}</div>
+        <div class="exercise-header">
+            <div class="exercise-name">${exercise}</div>
+            <button class="remove-exercise-btn">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
         <div class="sets-container">${sets}</div>
         <div class="pr-info">PR: ${data.pr || 'Not set'}</div>
-        <button class="button button-danger remove-exercise">
-            <i class="fas fa-times"></i>
-        </button>
     `;
     
     // Add click event listener to remove button
-    const removeButton = card.querySelector('.remove-exercise');
+    const removeButton = card.querySelector('.remove-exercise-btn');
     removeButton.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
