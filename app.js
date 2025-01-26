@@ -291,21 +291,25 @@ document.getElementById('exerciseForm')?.addEventListener('submit', function(e) 
     hideModal();
 });
 
-// Dark mode toggle
-document.getElementById('darkModeToggle')?.addEventListener('change', function(e) {
-    document.body.classList.toggle('dark-mode', e.target.checked);
-    localStorage.setItem('darkMode', e.target.checked);
-});
-
-// Units selection
-document.getElementById('unitsSelect')?.addEventListener('change', function(e) {
-    localStorage.setItem('units', e.target.value);
-});
-
-// Initialize on page load
+// Initialize common settings for all pages
 document.addEventListener('DOMContentLoaded', () => {
-    // Load exercises first - this is the ONLY place we should load exercises
-    loadExercises();
+    // Initialize dark mode
+    const darkMode = localStorage.getItem('darkMode') === 'true';
+    if (darkMode) {
+        document.body.classList.add('dark-mode');
+    }
+    const darkModeToggle = document.getElementById('darkModeToggle');
+    if (darkModeToggle) {
+        darkModeToggle.checked = darkMode;
+        darkModeToggle.addEventListener('change', function(e) {
+            document.body.classList.toggle('dark-mode', e.target.checked);
+            localStorage.setItem('darkMode', e.target.checked);
+        });
+    }
+
+    // Initialize theme color for all pages
+    const savedColor = localStorage.getItem('primaryColor') || '#007AFF';
+    document.documentElement.style.setProperty('--primary-color', savedColor);
     
     // Set up event listener for adding exercises with Enter key
     const newExerciseInput = document.getElementById('newExercise');
@@ -356,21 +360,6 @@ document.addEventListener('DOMContentLoaded', () => {
         // Initial load of progress data
         updateProgress();
     }
-    
-    // Initialize theme color for all pages
-    const savedColor = localStorage.getItem('primaryColor') || '#007AFF';
-    document.documentElement.style.setProperty('--primary-color', savedColor);
-    
-    // Initialize color picker if on settings page
-    const colorPicker = document.getElementById('primaryColor');
-    if (colorPicker) {
-        colorPicker.value = savedColor;
-        colorPicker.addEventListener('change', (e) => {
-            const newColor = e.target.value;
-            document.documentElement.style.setProperty('--primary-color', newColor);
-            localStorage.setItem('primaryColor', newColor);
-        });
-    }
 });
 
 // Initialize dashboard page
@@ -396,19 +385,26 @@ if (window.location.pathname.includes('progress.html')) {
 if (window.location.pathname.includes('settings.html')) {
     document.addEventListener('DOMContentLoaded', () => {
         loadFromLocalStorage();
+        
+        // Initialize theme color picker
+        const colorPicker = document.getElementById('primaryColorPicker');
+        if (colorPicker) {
+            const savedColor = localStorage.getItem('primaryColor') || '#007AFF';
+            colorPicker.value = savedColor;
+            document.documentElement.style.setProperty('--primary-color', savedColor);
+            
+            colorPicker.addEventListener('change', (e) => {
+                const newColor = e.target.value;
+                document.documentElement.style.setProperty('--primary-color', newColor);
+                localStorage.setItem('primaryColor', newColor);
+            });
+        }
     });
 }
 
 function loadFromLocalStorage() {
-    // Load other settings but NOT exercises
-    const darkMode = localStorage.getItem('darkMode') === 'true';
-    if (darkMode) {
-        document.body.classList.add('dark-mode');
-        const darkModeToggle = document.getElementById('darkModeToggle');
-        if (darkModeToggle) {
-            darkModeToggle.checked = true;
-        }
-    }
+    // No need to handle dark mode here as it's handled globally
+    // Add any other settings loading logic here if needed
 }
 
 function saveWorkout() {
