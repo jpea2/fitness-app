@@ -262,10 +262,10 @@ function updateWorkoutDisplay() {
     const workoutData = JSON.parse(localStorage.getItem('workoutData')) || {};
     container.innerHTML = '';
     
-    Object.entries(workoutData).forEach(([exercise, data]) => {
+    for (const [exercise, data] of Object.entries(workoutData)) {
         const card = createExerciseCard(exercise, data);
         container.appendChild(card);
-    });
+    }
 }
 
 // Form submission
@@ -373,32 +373,23 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-function updateProgress() {
-    console.log('Starting updateProgress function...');
-    const timeRange = document.getElementById('timeRange')?.value || 'all';
-    console.log('Selected time range:', timeRange);
-    
-    const savedWorkouts = JSON.parse(localStorage.getItem('savedWorkouts')) || {};
-    console.log('Retrieved saved workouts for progress:', savedWorkouts);
-    
-    const workouts = Object.entries(savedWorkouts);
-    
-    // Sort workouts by date (newest first)
-    workouts.sort((a, b) => new Date(b[0]) - new Date(a[0]));
-    console.log('Sorted workouts:', workouts);
-    
-    // Filter workouts based on time range
-    const filteredWorkouts = filterWorkoutsByTimeRange(workouts, timeRange);
-    console.log('Filtered workouts:', filteredWorkouts);
-    
-    // Update stats
-    updateStats(filteredWorkouts);
-    
-    // Update PRs
-    updatePRs(filteredWorkouts);
-    
-    // Update workout history
-    updateWorkoutHistory(filteredWorkouts);
+// Initialize dashboard page
+if (window.location.pathname.endsWith('index.html') || window.location.pathname === '/') {
+    document.addEventListener('DOMContentLoaded', () => {
+        loadExercises();
+        updateWorkoutDisplay(); // This will load and display any saved workout data
+    });
+}
+
+// Initialize progress page
+if (window.location.pathname.includes('progress.html')) {
+    document.addEventListener('DOMContentLoaded', () => {
+        console.log('Initializing progress page...');
+        updateProgress();
+        
+        // Add event listener for time range changes
+        document.getElementById('timeRange')?.addEventListener('change', updateProgress);
+    });
 }
 
 // Initialize settings page
@@ -753,4 +744,32 @@ async function forceUpdate() {
         button.innerHTML = originalContent;
         button.disabled = false;
     }
+}
+
+function updateProgress() {
+    console.log('Starting updateProgress function...');
+    const timeRange = document.getElementById('timeRange')?.value || 'all';
+    console.log('Selected time range:', timeRange);
+    
+    const savedWorkouts = JSON.parse(localStorage.getItem('savedWorkouts')) || {};
+    console.log('Retrieved saved workouts for progress:', savedWorkouts);
+    
+    const workouts = Object.entries(savedWorkouts);
+    
+    // Sort workouts by date (newest first)
+    workouts.sort((a, b) => new Date(b[0]) - new Date(a[0]));
+    console.log('Sorted workouts:', workouts);
+    
+    // Filter workouts based on time range
+    const filteredWorkouts = filterWorkoutsByTimeRange(workouts, timeRange);
+    console.log('Filtered workouts:', filteredWorkouts);
+    
+    // Update stats
+    updateStats(filteredWorkouts);
+    
+    // Update PRs
+    updatePRs(filteredWorkouts);
+    
+    // Update workout history
+    updateWorkoutHistory(filteredWorkouts);
 }
