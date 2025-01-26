@@ -81,7 +81,7 @@ function updateExerciseList() {
         li.className = 'settings-item';
         li.innerHTML = `
             <span>${exercise}</span>
-            <button onclick="removeExercise('${exercise}')" class="delete-button">
+            <button onclick="removeExercise('${exercise}')" class="remove-exercise-btn">
                 <i class="fas fa-times"></i>
             </button>
         `;
@@ -640,7 +640,9 @@ function updateWorkoutHistory(workouts) {
                     <span>${Object.keys(workout.exercises).length} exercise${Object.keys(workout.exercises).length !== 1 ? 's' : ''}</span>
                 </div>
                 <div class="workout-actions">
-                    <button onclick="deleteWorkout('${date}')" class="delete-workout-btn" aria-label="Delete workout">×</button>
+                    <button onclick="deleteWorkout('${date}')" class="remove-exercise-btn" aria-label="Delete workout">
+                        <i class="fas fa-times"></i>
+                    </button>
                 </div>
             </div>
             <div class="workout-details">

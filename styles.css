@@ -475,23 +475,6 @@ input:checked + .slider:before {
     gap: var(--spacing-md);
 }
 
-/* Exercise list delete buttons */
-.settings-list .delete-button {
-    background: transparent;
-    border: none;
-    color: var(--text-secondary);
-    opacity: 0.6;
-    padding: var(--spacing-xs);
-    font-size: 0.9rem;
-    cursor: pointer;
-    transition: opacity 0.2s ease;
-}
-
-.settings-list .delete-button:hover {
-    opacity: 1;
-    color: var(--danger-color);
-}
-
 /* Workout header */
 .workout-header {
     display: flex;
@@ -572,20 +555,7 @@ input:checked + .slider:before {
     align-items: center;
 }
 
-.delete-workout-btn {
-    background: none;
-    border: none;
-    color: #ef4444;
-    font-size: 1.5rem;
-    padding: 0.25rem 0.5rem;
-    cursor: pointer;
-    transition: color 0.2s;
-    line-height: 1;
-}
 
-.delete-workout-btn:hover {
-    color: #dc2626;
-}
 
 .workout-date {
     font-weight: 600;
@@ -674,27 +644,6 @@ input:checked + .slider:before {
 
 .settings-item span {
     color: var(--text-primary);
-}
-
-.remove-exercise-btn {
-    background: none;
-    border: none;
-    color: var(--danger-color);
-    padding: var(--spacing-sm);
-    cursor: pointer;
-    border-radius: var(--border-radius-sm);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s ease;
-}
-
-.remove-exercise-btn:hover {
-    background-color: rgba(255, 59, 48, 0.1);
-}
-
-.remove-exercise-btn i {
-    font-size: 1.2rem;
 }
 
 .color-picker {
