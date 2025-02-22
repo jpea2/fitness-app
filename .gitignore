@@ -1,0 +1,9 @@
+.DS_Store
+node_modules/
+*.log
+.env
+# Custom scripts
+push.sh
+
+# windsurf rules
+.windsurfrules

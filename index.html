@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TrackGymPro</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#007AFF">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Apple Touch Icons -->
+    <link rel="apple-touch-icon" href="icons/icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="icons/icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="icons/icon-192x192.png">
+    <link rel="apple-touch-icon" sizes="167x167" href="icons/icon-152x152.png">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="icons/icon-72x72.png">
+    
+    <!-- PWA JavaScript -->
+    <script src="pwa.js" defer></script>
+</head>
+<body>
+    <header>
+        <h1 class="header-title">TrackGymPro</h1>
+    </header>
+
+    <main class="fade-in">
+        <div class="card">
+            <div class="workout-header">
+                <input  type="date" id="workoutDate" class="workout-date">
+                <button id="saveWorkoutBtn" class="button button-success">
+                    <i class="fas fa-check"></i> Complete Workout
+                </button>
+            </div>
+        </div>
+
+        <div id="exercises-container">
+            <!-- Exercise cards will be added here -->
+        </div>
+
+        <div class="card">
+            <h2 class="card-title">Today's Workout</h2>
+            <button class="button button-primary" onclick="showModal()">
+                <i class="fas fa-plus"></i> Add Exercise
+            </button>
+        </div>
+    </main>
+
+    <!-- Modal for adding exercises -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Add Exercise</h2>
+                <button type="button" class="modal-close" onclick="hideModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="exerciseForm">
+                <div class="form-group">
+                    <select id="exercise" required>
+                        <option value="">Select Exercise</option>
+                    </select>
+                </div>
+                <div id="sets">
+                    <!-- Sets will be added here -->
+                </div>
+                <div class="form-group">
+                    <button type="button" onclick="addSet()" class="button button-secondary">
+                        <i class="fas fa-plus"></i> Add Set
+                    </button>
+                    <button type="submit" class="button button-primary">
+                        <i class="fas fa-save"></i> Save
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Save Workout Confirmation Modal -->
+    <div id="saveWorkoutModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Workout Complete!</h2>
+                <button type="button" class="modal-close" onclick="hideSaveWorkoutModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="workout-summary">
+                <p>Great job! Here's your workout summary:</p>
+                <div id="workoutSummary"></div>
+                <div class="form-group">
+                    <label for="workoutTag">Workout Type:</label>
+                    <select id="workoutTag" class="stats-select">
+                        <option value="untagged">Untagged</option>
+                        <option value="push">Push</option>
+                        <option value="pull">Pull</option>
+                        <option value="legs">Legs</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button onclick="startNewWorkout()" class="button button-primary">
+                    <i class="fas fa-plus"></i> Start New Workout
+                </button>
+                <button onclick="viewProgress()" class="button button-secondary">
+                    <i class="fas fa-chart-line"></i> View Progress
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <nav class="nav-bar">
+        <a href="index.html" class="nav-item active">
+            <i class="fas fa-dumbbell"></i>
+            <span>Workout</span>
+        </a>
+        <a href="progress.html" class="nav-item">
+            <i class="fas fa-chart-line"></i>
+            <span>Progress</span>
+        </a>
+        <a href="settings.html" class="nav-item">
+            <i class="fas fa-cog"></i>
+            <span>Settings</span>
+        </a>
+    </nav>
+
+    <script src="app.js"></script>
+</body>
+</html>

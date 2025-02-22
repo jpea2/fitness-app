@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - TrackGymPro</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#007AFF">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="TrackGymPro">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Apple Touch Icons -->
+    <link rel="apple-touch-icon" href="icons/icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="icons/icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="icons/icon-192x192.png">
+    <link rel="apple-touch-icon" sizes="167x167" href="icons/icon-152x152.png">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="icons/icon-72x72.png">
+    
+    <!-- PWA JavaScript -->
+    <script src="pwa.js" defer></script>
+</head>
+<body>
+    <header>
+        <h1 class="header-title">Settings</h1>
+    </header>
+
+    <main class="fade-in">
+        <div class="card">
+            <h2 class="card-title">Exercise List</h2>
+            <div class="add-exercise">
+                <input type="text" id="newExercise" class="modern-input" placeholder="Add new exercise">
+                <button onclick="addNewExercise()" class="button button-primary">
+                    <i class="fas fa-plus"></i> Add
+                </button>
+            </div>
+            <ul id="exercise-list" class="settings-list">
+                <!-- Exercise list items will be added here -->
+            </ul>
+        </div>
+
+        <div class="card">
+            <h2 class="card-title">App Settings</h2>
+            <ul class="settings-list">
+                <li class="settings-item">
+                    <span>Dark Mode</span>
+                    <label class="switch">
+                        <input type="checkbox" id="darkModeToggle">
+                        <span class="slider round"></span>
+                    </label>
+                </li>
+                <li class="settings-item">
+                    <span>Theme Color</span>
+                    <input type="color" id="primaryColorPicker" class="color-picker" value="#007AFF">
+                </li>
+                <li class="settings-item">
+                    <span>Units</span>
+                    <select id="unitsSelect" class="settings-select">
+                        <option value="metric">Metric (kg)</option>
+                        <option value="imperial">Imperial (lbs)</option>
+                    </select>
+                </li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h2 class="card-title">About</h2>
+            <div class="settings-list">
+                <div class="settings-item">
+                    <span>Version</span>
+                    <span>1.0.0</span>
+                </div>
+                <div class="settings-item">
+                    <span>Force Update</span>
+                    <button onclick="forceUpdate()" class="button button-primary">
+                        <i class="fas fa-sync-alt"></i> Update App
+                    </button>
+                </div>
+            <!--<div class="settings-item">-->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <nav class="nav-bar">
+        <a href="index.html" class="nav-item">
+            <i class="fas fa-dumbbell"></i>
+            <span>Workout</span>
+        </a>
+        <a href="progress.html" class="nav-item">
+            <i class="fas fa-chart-line"></i>
+            <span>Progress</span>
+        </a>
+        <a href="settings.html" class="nav-item active">
+            <i class="fas fa-cog"></i>
+            <span>Settings</span>
+        </a>
+    </nav>
+
+    <script src="app.js"></script>
+</body>
+</html>

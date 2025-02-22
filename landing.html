@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TrackGymPro - Your Personal Fitness Companion</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #6366f1 0%, #3b82f6 100%);
+        }
+        .screenshot {
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            border-radius: 1rem;
+            background-color: #f3f4f6;
+            height: 600px;
+            width: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            padding: 0;
+        }
+        .screenshot img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: top;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Hero Section -->
+    <header class="gradient-bg text-white">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center">
+                <img src="icons/icon-72x72.png" alt="TrackGymPro Logo" class="h-10 w-10">
+                <span class="ml-3 text-xl font-bold">TrackGymPro</span>
+            </div>
+            <a href="index.html" class="bg-white text-indigo-600 px-6 py-2 rounded-full font-semibold hover:bg-opacity-90 transition-all">
+                Launch App
+            </a>
+        </nav>
+        
+        <div class="container mx-auto px-6 py-20 text-center">
+            <h1 class="text-5xl font-bold mb-6">Your Fitness Journey Starts Here</h1>
+            <p class="text-xl mb-12 max-w-2xl mx-auto">
+                Track your workouts, monitor progress, and achieve your fitness goals with TrackGymPro.
+                No downloads. No accounts. Just open and start your workout.
+                Experience the future of fitness with our Progressive Web App.
+            </p>
+            <a href="index.html" class="bg-white text-indigo-600 px-8 py-3 rounded-full font-bold text-lg hover:bg-opacity-90 transition-all inline-block">
+                Start Working Out →
+            </a>
+        </div>
+    </header>
+
+    <!-- Features Section -->
+    <section class="py-20">
+        <div class="container mx-auto px-6">
+            <h2 class="text-3xl font-bold text-center mb-16">Why Choose TrackGymPro?</h2>
+            <div class="grid md:grid-cols-3 gap-12">
+                <div class="text-center">
+                    <div class="bg-indigo-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <svg class="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-4">Instant Access</h3>
+                    <p class="text-gray-600">No app store needed. Open in your browser and start immediately.</p>
+                </div>
+                <div class="text-center">
+                    <div class="bg-indigo-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <svg class="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-4">No Account Required</h3>
+                    <p class="text-gray-600">Jump right in without signing up. Your privacy matters.</p>
+                </div>
+                <div class="text-center">
+                    <div class="bg-indigo-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <svg class="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-4">Works Offline</h3>
+                    <p class="text-gray-600">Access your workouts even without internet connection.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- App Screenshots -->
+    <section class="py-20 bg-gray-100">
+        <div class="container mx-auto px-6">
+            <h2 class="text-3xl font-bold text-center mb-16">See It In Action</h2>
+            <div class="flex gap-8 overflow-x-auto pb-8 justify-center">
+                <div class="screenshot flex-shrink-0">
+                    <img src="Screenshots/TrackGymPro-dashboard.png" 
+                         alt="Workout tracking interface" 
+                         class="w-full h-full object-contain">
+                </div>
+                <div class="screenshot flex-shrink-0">
+                    <img src="Screenshots/TrackGymPro-progress.png" 
+                         alt="Progress tracking view" 
+                         class="w-full h-full object-contain">
+                </div>
+                <div class="screenshot flex-shrink-0">
+                    <img src="Screenshots/TrackGymPro-settings.png" 
+                         alt="Settings and customization" 
+                         class="w-full h-full object-contain">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action -->
+    <section class="py-20">
+        <div class="container mx-auto px-6 text-center">
+            <h2 class="text-3xl font-bold mb-8">Ready to Transform Your Fitness Journey?</h2>
+            <p class="text-xl text-gray-600 mb-12 max-w-2xl mx-auto">
+                Join thousands of users who've already discovered the easiest way to track their fitness progress.
+                No credit card required. Always free.
+            </p>
+            <a href="index.html" class="gradient-bg text-white px-8 py-3 rounded-full font-bold text-lg hover:opacity-90 transition-all inline-block">
+                Start Your Journey Now →
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="container mx-auto px-6">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="flex items-center mb-4 md:mb-0">
+                    <img src="icons/icon-72x72.png" alt="TrackGymPro" class="h-8 w-8">
+                    <span class="ml-3 text-lg">TrackGymPro</span>
+                </div>
+                <div class="text-gray-400">
+                    2025 TrackGymPro. All rights reserved.
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+    <title>Progress - TrackGymPro</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#007AFF">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="TrackGymPro">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Apple Touch Icons -->
+    <link rel="apple-touch-icon" href="icons/icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="icons/icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="icons/icon-192x192.png">
+    <link rel="apple-touch-icon" sizes="167x167" href="icons/icon-152x152.png">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="icons/icon-72x72.png">
+    
+    <!-- PWA JavaScript -->
+    <script src="pwa.js" defer></script>
+</head>
+<body>
+    <header>
+        <h1 class="header-title">Progress</h1>
+    </header>
+
+    <main class="fade-in">
+        <div class="card">
+            <div class="stats-header">
+                <h2 class="card-title">Overview</h2>
+                <select id="timeRange" class="stats-select">
+                    <option value="all" selected>All Time</option>
+                    <option value="90">Last 90 Days</option>
+                    <option value="30">Last 30 Days</option>
+                    <option value="7">Last 7 Days</option>
+                </select>
+            </div>
+            <div class="progress-stats">
+                <div class="stat-item">
+                    <div class="stat-value" id="totalWorkouts">-</div>
+                    <div class="stat-label">Workouts</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="totalExercises">-</div>
+                    <div class="stat-label">Exercises</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2 class="card-title">Personal Records</h2>
+            <div id="prList" class="pr-list">
+                <!-- PRs will be added here -->
+            </div>
+        </div>
+
+        <div class="card">
+            <h2 class="card-title">Workout History</h2>
+            <div class="filter-controls">
+                <label for="filterByTag">Filter by Tag:</label>
+                <select id="filterByTag" onchange="filterWorkouts()" class="stats-select">
+                    <option value="all">All Workouts</option>
+                    <option value="push">Push</option>
+                    <option value="pull">Pull</option>
+                    <option value="legs">Legs</option>
+                    <option value="untagged">Untagged</option>
+                </select>
+            </div>
+            <div id="workoutHistory" class="workout-history">
+                <!-- Workout history will be added here -->
+            </div>
+        </div>
+        
+    </main>
+
+    <!-- Workout Details Modal -->
+    <div id="workoutDetailsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="workoutDate">Workout Details</h2>
+                <button type="button" class="modal-close" onclick="hideWorkoutDetails()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div id="workoutDetails" class="workout-details">
+                <!-- Workout details will be added here -->
+            </div>
+        </div>
+    </div>
+
+    <nav class="nav-bar">
+        <a href="index.html" class="nav-item">
+            <i class="fas fa-dumbbell"></i>
+            <span>Workout</span>
+        </a>
+        <a href="progress.html" class="nav-item active">
+            <i class="fas fa-chart-line"></i>
+            <span>Progress</span>
+        </a>
+        <a href="settings.html" class="nav-item">
+            <i class="fas fa-cog"></i>
+            <span>Settings</span>
+        </a>
+    </nav>
+
+    <script src="app.js"></script>
+</body>
+</html>
